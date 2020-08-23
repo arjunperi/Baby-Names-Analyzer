@@ -5,6 +5,7 @@ This is the link to the [assignment](http://www.cs.duke.edu/courses/compsci307/c
 
 
 ### What is the answer to the two questions below for the data file yob1900.txt (pick a letter that makes it easy too answer)? 
+1. 
 
 ### Describe the algorithm you would use to answer each one.
 
