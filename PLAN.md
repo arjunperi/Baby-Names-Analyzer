@@ -6,7 +6,7 @@ This is the link to the [assignment](http://www.cs.duke.edu/courses/compsci307/c
 
 ### What is the answer to the two questions below for the data file yob1900.txt (pick a letter that makes it easy too answer)? 
 1. The top ranked female name is Mary, and the top ranked male name is John.
-2. In 1900 for males, 1 name starts with the letter Z (Zeno), and 5 total babies have names starting with the letter Z.
+2. In 1900 for males, 0 names start with the letter X, so 0 total instances.
 
 ### Describe the algorithm you would use to answer each one.
 1. First, I would take the text file, add each line into an array list, then use that to create a 2D array containing all the data, split into three columns - name, gender, and count (do this using the split() function). For the top ranked female name, I know it is going to be at the top so I will just take array[0][0]. For the top ranked male name, I would loop through the array until the first instance of gender = male, then I would take the namme at that position. 
