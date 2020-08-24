@@ -8,13 +8,4 @@ Florence,F,3920
 Ethel,F,3896
 Marie,F,3856
 Lillian,F,3414
-John,M,9829
-William,M,8579
-James,M,7245
-George,M,5403
-Charles,M,4099
-Robert,M,3821
-Joseph,M,3714
-Frank,M,3477
-Edward,M,2720
-Henry,M,2606
+
