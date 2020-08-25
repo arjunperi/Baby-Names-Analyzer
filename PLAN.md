@@ -12,7 +12,7 @@ This is the link to the [assignment](http://www.cs.duke.edu/courses/compsci307/c
 1. First, I would take the text file, add each line into an array list, then use that to create a 2D array containing all the data, split into three columns - name, gender, and count (do this using the split() function). For the top ranked female name, I know it is going to be at the top so I will just take array[0][0]. For the top ranked male name, I would loop through the array until the first instance of gender = male, then I would take the namme at that position. 
 2. I would loop through my 2D array and check if each row has the matching gender and the first letter of name (using substring() function). If so, I would add 1 to a name counter, and I would add the number of names to a total counter, and then break. If not, I would continue looping. 
 - Note that for my program, I used yob1900.txt
-- Note that this was t
+
 
 ### Likely you may not even need a data structure to answer the questions below, but what about some of the questions in Part 2?
 1. To answer the questions in Part 2, I need to implement a consistent method of tracking rankings. To do this, I can add another column to my 
