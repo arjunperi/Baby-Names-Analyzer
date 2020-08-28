@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner; // Import the Scanner class to read text files
 
+//adding rank field - start at 1, increment every time you go to the next line UNLESS the next line has count field equal to the prev --> add the rank in
 
 
 public class Main {
@@ -31,15 +32,31 @@ public class Main {
             }
 
             //Initialize the size of 2D array with the number of lines as the number of rows, and 3 columns
-            name_arr = new String[lines][3];
+            name_arr = new String[lines][4];
+
+//            //Populate 2D array by splitting each entry of the array list and placing the three items of each entry into the three columns of the array
+//            for(int row=0;row<name_arr.length;row++){
+//                for(int col=0;col<name_arr[row].length;col++){
+//                    name_arr[row][col] = names.get(row).split(",")[col];
+//                }
+//            }
 
             //Populate 2D array by splitting each entry of the array list and placing the three items of each entry into the three columns of the array
             for(int row=0;row<name_arr.length;row++){
-                for(int col=0;col<name_arr[row].length;col++){
+                for(int col=0;col<3;col++){
                     name_arr[row][col] = names.get(row).split(",")[col];
                 }
             }
 
+            //Add the rank field - is there any way to do this within one of the existing loops?
+
+//            int rank = 1;
+//            for(int row=0;row<name_arr.length;row++){
+//
+//                if (name_arr[row][2] == name_arr[row+1][2])
+//
+//            }
+//
             myReader.close();
 
         } catch (FileNotFoundException e) {
@@ -50,7 +67,7 @@ public class Main {
         //Call methods for female top name, male top name, and letter/gender algorithm
         System.out.println(instance.femaleTopRanked());
         System.out.println(instance.maleTopRanked());
-        System.out.println(instance.letter("M","J"));
+        System.out.println(instance.letter("F","Z"));
 
     }
 
@@ -74,19 +91,27 @@ public class Main {
         boolean check = false;
 
         //Go through 2D array, if you find a row with middle column = "M", take that row's first column as the top male name
+//        for(int row=0;row<name_arr.length;row++){
+//            for(int col=0;col<name_arr[row].length;col++){
+//                if (name_arr[row][1].equals("M")) {
+//                    check = true;
+//                    maleTop = "The top ranked male name is: " + name_arr[row][0];
+//                    break;
+//                }
+//            }
+//            //If we found a male, leave the loop
+//            if (check == true) {
+//                break;
+//            }
+//        }
+
         for(int row=0;row<name_arr.length;row++){
-            for(int col=0;col<name_arr[row].length;col++){
-                if (name_arr[row][1].equals("M")) {
-                    check = true;
-                    maleTop = "The top ranked male name is: " + name_arr[row][0];
-                    break;
-                }
-            }
-            //If we found a male, leave the loop
-            if (check == true) {
+            if (name_arr[row][1].equals("M")) {
+                maleTop = "The top ranked male name is: " + name_arr[row][0];
                 break;
             }
         }
+
         return maleTop;
     }
 
