@@ -34,12 +34,6 @@ public class Main {
             //Initialize the size of 2D array with the number of lines as the number of rows, and 3 columns
             name_arr = new String[lines][4];
 
-//            //Populate 2D array by splitting each entry of the array list and placing the three items of each entry into the three columns of the array
-//            for(int row=0;row<name_arr.length;row++){
-//                for(int col=0;col<name_arr[row].length;col++){
-//                    name_arr[row][col] = names.get(row).split(",")[col];
-//                }
-//            }
 
             //Populate 2D array by splitting each entry of the array list and placing the three items of each entry into the three columns of the array
             for(int row=0;row<name_arr.length;row++){
@@ -50,13 +44,16 @@ public class Main {
 
             //Add the rank field - is there any way to do this within one of the existing loops?
 
-//            int rank = 1;
-//            for(int row=0;row<name_arr.length;row++){
-//
-//                if (name_arr[row][2] == name_arr[row+1][2])
-//
-//            }
-//
+            int rank = 1;
+            for(int row=0;row<name_arr.length;row++) {
+                name_arr[row][3] = Integer.toString(rank);
+                if (row < 3729) {
+                    if (!name_arr[row][2].equals(name_arr[row + 1][2])) {
+                        rank++;
+                    }
+                }
+            }
+
             myReader.close();
 
         } catch (FileNotFoundException e) {
