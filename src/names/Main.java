@@ -21,7 +21,7 @@ public class Main {
         //System.out.println(instance.letter("F","Z"));
         //System.out.println(instance.nameGenderRank("Emily","F"));
         //System.out.println(instance.nameGenderPair(2000,"Emily", "F"));
-        instance.rangeOfYears("F");
+        instance.rangeOfYears(2000,2009, "F");
     }
 
 
@@ -200,13 +200,16 @@ public class Main {
         return ret;
     }
 
-    public void rangeOfYears(String gender){
+    //works, need to design the return part better
+    //edge cases -
+    public void rangeOfYears(int start, int end, String gender){
         Map<String, Integer> rank_map = new HashMap<String, Integer>();
-        //loop through files from start to end
-        File dir = new File("data/ssa_2000s");
-        File[] directoryListing = dir.listFiles();
-        for (File child : directoryListing) {
-            String[][] curr_arr = getArray(Integer.parseInt(child.getName().substring(3, 7)));
+        Map<String,Integer> ret = new HashMap<String, Integer>();
+        //File dir = new File("data/ssa_2000s");
+        //File[] directoryListing = dir.listFiles();
+        for (int year = start; year <= end; year++) {
+            //String[][] curr_arr = getArray(Integer.parseInt(child.getName().substring(3, 7)));
+            String[][] curr_arr = getArray(year);
             if (gender.equals("F")){
                 String top = curr_arr[0][0];
                 if (rank_map.containsKey(top)){
@@ -235,10 +238,34 @@ public class Main {
         {
             System.out.println("key: " + entry.getKey() + "; value: " + entry.getValue());
         }
+
+        //need to design this better
+        //we need to go into the the map, find the max value, and then get all keys associated with that value
+        //for now, lets return in key:value format like above
+
+        int max =0;
+        for (String key : rank_map.keySet())
+        {
+            if (rank_map.get(key) >max){
+                max = rank_map.get(key);
+            }
         }
 
-        //for a given gender, find the top ranked name for each file -- store it in a map with key = name, value = occurences
-        //return key with max value
+        for (String key : rank_map.keySet())
+        {
+            if (rank_map.get(key) == max){
+                ret.put(key, rank_map.get(key));
+            }
+        }
+
+        for (Map.Entry entry : ret.entrySet())
+        {
+            System.out.println("key: " + entry.getKey() + "; value: " + entry.getValue());
+        }
+
+        }
+
+        public void 
 
 
     }
