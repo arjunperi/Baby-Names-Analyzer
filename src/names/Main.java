@@ -1,9 +1,7 @@
 package names;
 import java.io.File; // Import the File class
 import java.io.FileNotFoundException;  // Import this class to handle errors
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner; // Import the Scanner class to read text files
+import java.util.*;
 
 //adding rank field - start at 1, increment every time you go to the next line UNLESS the next line has count field equal to the prev --> add the rank in
 // need to get data structures for multiple files
@@ -11,6 +9,7 @@ import java.util.Scanner; // Import the Scanner class to read text files
 // let's say I want to run gender/name rank for the 2000s :
 
 
+//toUppercase???
 public class Main {
 
     public static void main (String[] args) {
@@ -20,8 +19,9 @@ public class Main {
         //System.out.println(instance.femaleTopRanked());
         //System.out.println(instance.maleTopRanked());
         //System.out.println(instance.letter("F","Z"));
-        System.out.println(instance.nameGenderRank("Emily","F"));
-        System.out.println(instance.nameGenderPair(2000,"Emily", "F"));
+        //System.out.println(instance.nameGenderRank("Emily","F"));
+        //System.out.println(instance.nameGenderPair(2000,"Emily", "F"));
+        instance.rangeOfYears("F");
     }
 
 
@@ -145,26 +145,29 @@ public class Main {
     //What about if the name isn't found?
     public List<Integer> nameGenderRank(String name, String gender){
         //test on ssa_2000s
-        List<Integer> check  = new ArrayList<>();
+        List<Integer> ret  = new ArrayList<>();
         File dir = new File("data/ssa_2000s");
         File[] directoryListing = dir.listFiles();
         for (File child : directoryListing) {
             String[][] name_arr = getArray(Integer.parseInt(child.getName().substring(3,7)));
             for(int row=0;row<name_arr.length;row++){
                 if (name_arr[row][0].equals(name) && name_arr[row][1].equals(gender)) {
-                    check.add(Integer.parseInt(name_arr[row][3]));
+                    ret.add(Integer.parseInt(name_arr[row][3]));
                     break;
                 }
             }
 
         }
 
-        return check;
+        return ret;
     }
 
+    //Works - file name assumption?
+    //What if a rank exists in one file but not another?
+    //What if a name/gender doesn't exist in the specified year
     public String nameGenderPair(int year, String name, String gender) {
         //get the most recent year
-       String ret = "a";
+       String ret = "";
         int max = 0;
         int year_rank = 0;
         List<Integer> check = new ArrayList<>();
@@ -197,11 +200,55 @@ public class Main {
         return ret;
     }
 
+    public void rangeOfYears(String gender){
+        Map<String, Integer> rank_map = new HashMap<String, Integer>();
+        //loop through files from start to end
+        File dir = new File("data/ssa_2000s");
+        File[] directoryListing = dir.listFiles();
+        for (File child : directoryListing) {
+            String[][] curr_arr = getArray(Integer.parseInt(child.getName().substring(3, 7)));
+            if (gender.equals("F")){
+                String top = curr_arr[0][0];
+                if (rank_map.containsKey(top)){
+                    rank_map.put(top, rank_map.get(top) + 1);
+                }
+                else{
+                    rank_map.put(top, 1);
+                }
+            }
+            else {
+                for (int row = 0; row < curr_arr.length; row++) {
+                    if (curr_arr[row][1].equals("M")) {
+                        String top = curr_arr[row][0];
+                        if (rank_map.containsKey(top)){
+                            rank_map.put(top, rank_map.get(top) + 1);
+                        }
+                        else{
+                            rank_map.put(top, 1);
+                        }
+                        break;
+                    }
+                }
+            }
+            }
+        for (Map.Entry entry : rank_map.entrySet())
+        {
+            System.out.println("key: " + entry.getKey() + "; value: " + entry.getValue());
+        }
+        }
+
+        //for a given gender, find the top ranked name for each file -- store it in a map with key = name, value = occurences
+        //return key with max value
+
+
+    }
+
+
 
 
 
         // go to recent year, get the rank at that gender,
 
 
-    }
+
 
