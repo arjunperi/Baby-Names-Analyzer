@@ -6,7 +6,7 @@ Ruth,F,4765
 Elizabeth,F,4096
 Florence,F,3920
 Ethel,F,3896
-Marie,F,3856
+Marie,M,3856
 Lillian,F,3414
 John,M,9829
 William,M,8579
