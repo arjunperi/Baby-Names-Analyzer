@@ -14,11 +14,11 @@ public class Main {
 
 
         //Call methods for female top name, male top name, and letter/gender algorithm
-        //System.out.println(instance.femaleTopRanked(2010));
+        //System.out.println(instance.femaleTopRanked(2000));
         //System.out.println(instance.maleTopRanked());
         //System.out.println(instance.letter("F","Z"));
         //System.out.println(instance.nameGenderRank("xyz","F"));
-        //System.out.println(instance.nameGenderPair(2000,"Michael", "M"));
+        System.out.println(instance.nameGenderPair(1901,"xyz", "L"));
         //instance.rangeOfYears(2000,2010, "L");
         //System.out.println(instance.popularGirls(19003,19004));
     }
@@ -26,77 +26,72 @@ public class Main {
 
     //get the 2d array for a given year
     // Was originally going to make this a void method, but when working with multiple years at once, need this to return a different array each time so changed to String[][]
-    public String[][] getArray(int year) throws FileNotFoundException {
-        boolean check = true;
-        List<String> names = new ArrayList<String>();
+    public String[][] getArray(int year) {
+        List<String> names = new ArrayList<>();
         int lines = 0;
         String[][] ret;
 
-        //try {
-            //File myObj = new File("data/yob" + year + ".txt");
-            //File myObj = new File("data/TestSets/yob" + year + "split.txt");
-            File myObj = new File("data/ssa_2000s/yob" + year + ".txt");
+        try {
+            File myObj = new File("data/TestSets/yob" + year + "split.txt");
             Scanner myReader = new Scanner(myObj);
 
             //Read file and add each line to an array list called names
             //Read file and count the number of total lines
             while (myReader.hasNextLine()) {
-                lines ++;
-                //String data = myReader.nextLine();
+                lines++;
                 names.add(myReader.nextLine());
             }
             myReader.close();
-        //}
-
-        /*
-        catch (FileNotFoundException e) {
-            check = true;
+        } catch (FileNotFoundException e) {
             System.out.println("An error occurred.");
+            System.exit(0);
         }
 
-         */
+        //Initialize the size of 2D array with the number of lines as the number of rows, and 3 columns
+        ret = new String[lines][4];
 
 
-            //Initialize the size of 2D array with the number of lines as the number of rows, and 3 columns
-            ret = new String[lines][4];
-
-
-            //Populate 2D array by splitting each entry of the array list and placing the three items of each entry into the three columns of the array
-            for(int row=0;row<ret.length;row++){
-                for(int col=0;col<3;col++){
-                    ret[row][col] = names.get(row).split(",")[col];
-                }
+        //Populate 2D array by splitting each entry of the array list and placing the three items of each entry into the three columns of the array
+        int rank = 1;
+        for (int row = 0; row < ret.length; row++) {
+            for (int col = 0; col < 3; col++) {
+                ret[row][col] = names.get(row).split(",")[col];
             }
-
-            //Add the rank field - is there any way to do this within one of the existing loops?
-            int rank = 1;
-            for(int row=0;row<ret.length;row++) {
+            if (row == 0){
                 ret[row][3] = Integer.toString(rank);
-                if (row < lines-1) {
-                    if (!ret[row][2].equals(ret[row + 1][2])) {
-                        rank++;
-                    }
-                }
             }
-            return ret;
+            else if (row<lines){
+                if (!ret[row][2].equals(ret[row-1][2])){
+                    rank++;
+                }
+                ret[row][3] = Integer.toString(rank);
+            }
+        }
+        return ret;
     }
 
-
+    
     //Method to find the top ranked female name in the file
     //Edge cases -
     // there are no females in the file,
     // the year isn't in the data set!
-    public String femaleTopRanked(int year){
-        try {
+    public String femaleTopRanked(int year) throws FileNotFoundException{
+        //try {
             String[][] name_arr = getArray(year);
             //Initialize return string to indicate no females found
+            String femTop = "There are no females in this dataset";
+            //If the first row entry of the 2D array has middle column = "F", then take the first column of that row's entry as the top name
+            if (name_arr[0][1].equals("F")) {
+                femTop = "The top ranked female name is: " + name_arr[0][0];
+            }
+            //return femTop;
 
-
-        }
-        catch (FileNotFoundException e){
+        //}
+        //catch (FileNotFoundException e){
             System.out.println("an error occured");
-        }
-        return "";
+       // }
+        //
+        return femTop;
     }
 
     //Method to find the top ranked male name in the file
@@ -109,16 +104,15 @@ public class Main {
         String maleTop = "There are no males in this dataset";
 
         //Initialize check to be false
-        boolean check = false;
+        //boolean check = false;
 
 
-        for(int row=0;row<name_arr.length;row++){
-            if (name_arr[row][1].equals("M")) {
-                maleTop = "The top ranked male name is: " + name_arr[row][0];
+        for (String[] rows : name_arr) {
+            if (rows[1].equals("M")) {
+                maleTop = "The top ranked male name is: " + rows[0];
                 break;
             }
         }
-
         return maleTop;
     }
 
@@ -137,16 +131,16 @@ public class Main {
 
         //Go through the rows of 2D array, and for a row if the gender and starting letter of the name match the inputs, add 1 to the name counter and the count field
         // (last column entry) to the total counter
-        for(int row=0;row<name_arr.length;row++){
-            if (name_arr[row][1].equals(gender) && name_arr[row][0].substring(0,1).equals(letter)){
+        for (String[] strings : name_arr) {
+            if (strings[1].equals(gender) && strings[0].substring(0, 1).equals(letter)) {
                 nameCounter++;
-                totalCounter += Integer.parseInt(name_arr[row][2]);
+                totalCounter += Integer.parseInt(strings[2]);
                 check = true;
             }
         }
 
         //If the combination exists, format string as follows
-        if (check == true){
+        if (check){
             ret = "For gender " + gender + " and starting letter " + letter + ", there are " + nameCounter + " different names and " + totalCounter + " total instances";
         }
 
@@ -175,7 +169,7 @@ public class Main {
                     break;
                 }
             }
-            if (check == false){
+            if (!check){
                 ret.add(0);
             }
 
@@ -210,20 +204,20 @@ public class Main {
 
         //get the rank of year in question
         String[][] year_arr = getArray(year);
-        for(int row=0;row<year_arr.length;row++){
-            if (year_arr[row][0].equals(name) && year_arr[row][1].equals(gender)) {
+        for (String[] rows : year_arr) {
+            if (rows[0].equals(name) && rows[1].equals(gender)) {
                 check_year = true;
-                year_rank = Integer.parseInt(year_arr[row][3]);
+                year_rank = Integer.parseInt(rows[3]);
                 break;
             }
         }
 
         //go to the most recent year and get the name/gender at that rank
         String[][] recent_arr = getArray(max);
-        for(int row=0;row<recent_arr.length;row++){
-            if (Integer.parseInt(recent_arr[row][3]) == year_rank && recent_arr[row][1].equals(gender)) {
-                check_recent= true;
-                ret = recent_arr[row][0];
+        for (String[] rows : recent_arr) {
+            if (Integer.parseInt(rows[3]) == year_rank && rows[1].equals(gender)) {
+                check_recent = true;
+                ret = rows[0];
                 break;
             }
         }
@@ -241,8 +235,8 @@ public class Main {
     //year not in dataset - unresolved
     //gender not in dataset - resolved
     public String rangeOfYears(int start, int end, String gender) throws FileNotFoundException {
-        Map<String, Integer> rank_map = new HashMap<String, Integer>();
-        Map<String, Integer> ret = new HashMap<String, Integer>();
+        Map<String, Integer> rank_map = new HashMap<>();
+        Map<String, Integer> ret = new HashMap<>();
         boolean check = false;
         //File dir = new File("data/ssa_2000s");
         //File[] directoryListing = dir.listFiles();
@@ -259,9 +253,9 @@ public class Main {
                 }
             } else if (gender.equals("M")){
                 check = true;
-                for (int row = 0; row < curr_arr.length; row++) {
-                    if (curr_arr[row][1].equals("M")) {
-                        String top = curr_arr[row][0];
+                for (String[] rows : curr_arr) {
+                    if (rows[1].equals("M")) {
+                        String top = rows[0];
                         if (rank_map.containsKey(top)) {
                             rank_map.put(top, rank_map.get(top) + 1);
                         } else {
@@ -296,7 +290,7 @@ public class Main {
             }
         }
 
-        if (check == true) {
+        if (check) {
             for (Map.Entry entry : ret.entrySet()) {
                 //System.out.println("key: " + entry.getKey() + "; value: " + entry.getValue());
                 return "From " + start + " to " + end + " for gender " + gender + ", the most popular name was " + entry.getKey() + " and it had the top rank " + entry.getValue() + " times";
@@ -313,17 +307,17 @@ public class Main {
         //no girls in the dataset
         public String popularGirls(int start, int end) throws FileNotFoundException {
         boolean check = false;
-            Map<String, Integer> letter_map = new TreeMap<String, Integer>();
+            Map<String, Integer> letter_map = new TreeMap<>();
             for (int year = start; year <= end; year++) {
                 String[][] curr_arr = getArray(year);
-                for (int row = 0; row < curr_arr.length; row++) {
-                    if (curr_arr[row][1].equals("F")) {
+                for (String[] rows : curr_arr) {
+                    if (rows[1].equals("F")) {
                         check = true;
-                        String letter = curr_arr[row][0].substring(0, 1);
+                        String letter = rows[0].substring(0, 1);
                         if (letter_map.containsKey(letter)) {
-                            letter_map.put(letter, letter_map.get(letter) + Integer.parseInt(curr_arr[row][2]));
+                            letter_map.put(letter, letter_map.get(letter) + Integer.parseInt(rows[2]));
                         } else {
-                            letter_map.put(letter, Integer.parseInt(curr_arr[row][2]));
+                            letter_map.put(letter, Integer.parseInt(rows[2]));
                         }
                     }
                 }
@@ -347,11 +341,11 @@ public class Main {
             Set<String> ret = new TreeSet<>();
             for (int year = start; year <= end; year++) {
                 String[][] curr_arr = getArray(year);
-                for (int row = 0; row < curr_arr.length; row++) {
-                    if (curr_arr[row][1].equals("F") && curr_arr[row][0].substring(0,1).equals(letter_max)){
-                        ret.add(curr_arr[row][0]);
+                for (String[] rows : curr_arr) {
+                    if (rows[1].equals("F") && rows[0].substring(0, 1).equals(letter_max)) {
+                        ret.add(rows[0]);
                     }
-                    }
+                }
                 }
 
             for (Map.Entry entry : letter_map.entrySet())
@@ -359,7 +353,7 @@ public class Main {
                 System.out.println("key: " + entry.getKey() + "; value: " + entry.getValue());
             }
 
-            if (check == true) {
+            if (check) {
                 return "From " + start + " to " + end + ", the most popular letter that girls' names started with was " + letter_max + ", and the female names in the dataset starting with " + letter_max + " are: " + ret.toString();
             }
             else{
