@@ -18,7 +18,7 @@ public class Main {
         //System.out.println(instance.maleTopRanked());
         //System.out.println(instance.letter("F","Z"));
         //System.out.println(instance.nameGenderRank("xyz","F"));
-        System.out.println(instance.nameGenderPair(1901,"xyz", "L"));
+        //System.out.println(instance.nameGenderPair(1901,"xyz", "L"));
         //instance.rangeOfYears(2000,2010, "L");
         //System.out.println(instance.popularGirls(19003,19004));
     }
@@ -50,7 +50,6 @@ public class Main {
         //Initialize the size of 2D array with the number of lines as the number of rows, and 3 columns
         ret = new String[lines][4];
 
-
         //Populate 2D array by splitting each entry of the array list and placing the three items of each entry into the three columns of the array
         int rank = 1;
         for (int row = 0; row < ret.length; row++) {
@@ -70,7 +69,7 @@ public class Main {
         return ret;
     }
 
-    
+
     //Method to find the top ranked female name in the file
     //Edge cases -
     // there are no females in the file,
@@ -102,11 +101,6 @@ public class Main {
         String[][] name_arr = getArray(year);
         //Initialize return string to indicate no females found
         String maleTop = "There are no males in this dataset";
-
-        //Initialize check to be false
-        //boolean check = false;
-
-
         for (String[] rows : name_arr) {
             if (rows[1].equals("M")) {
                 maleTop = "The top ranked male name is: " + rows[0];
@@ -116,11 +110,13 @@ public class Main {
         return maleTop;
     }
 
+
     //Method to perform the gender/starting letter algorithm
     //Edge cases - gender/letter combo doesn't exist
     //Year isn't in dataset!
     public String letter(int year, String gender,String letter) throws FileNotFoundException {
         String[][] name_arr = getArray(year);
+
         //Intialize return string to indicate that the given combination does not exist
         String ret = "Gender " + gender + " and starting letter " + letter +  " combination does not exist for this dataset";
 
@@ -157,7 +153,7 @@ public class Main {
     public String nameGenderRank(String name, String gender) throws FileNotFoundException {
         //test on ssa_2000s
         List<Integer> ret  = new ArrayList<>();
-        File dir = new File("data/ssa_2000s");
+        File dir = new File("data/TestSets");
         File[] directoryListing = dir.listFiles();
         for (File child : directoryListing) {
             boolean check = false;
@@ -202,7 +198,7 @@ public class Main {
             }
         }
 
-        //get the rank of year in question
+        //get the rank of the name within the year in question
         String[][] year_arr = getArray(year);
         for (String[] rows : year_arr) {
             if (rows[0].equals(name) && rows[1].equals(gender)) {

@@ -38,14 +38,14 @@ class MainTest {
         assertEquals("For gender M and starting letter J, there are 3 different names and 20788 total instances", instance.letter(19001, "M", "J"));
     }
 
-    /*
+
     @Test
     void nameGenderRank() throws FileNotFoundException {
-        assertEquals("The rankings for the name Emily and gender F are: [1, 1, 1, 1, 1, 1, 1, 1, 3, 6], with rank 0 indicating the name/gender combination does not exist for a year.", instance.nameGenderRank("Emily","F"));
-        assertEquals("The rankings for the name xyz and gender F are: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], with rank 0 indicating the name/gender combination does not exist for a year.", instance.nameGenderRank("xyz", "F"));
+        assertEquals("The rankings for the name Emily and gender F are: [0, 0, 0, 0, 0, 0, 1, 1, 6], with rank 0 indicating the name/gender combination does not exist for a year.", instance.nameGenderRank("Emily","F"));
+        assertEquals("The rankings for the name xyz and gender F are: [0, 0, 0, 0, 0, 0, 0, 0, 0], with rank 0 indicating the name/gender combination does not exist for a year.", instance.nameGenderRank("xyz", "F"));
         //assertEquals("");
      }
-     */
+
 
     @Test
     void nameGenderPair() throws FileNotFoundException {
