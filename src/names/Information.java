@@ -33,6 +33,16 @@ public class Information {
         return genders_equal;
     }
 
+    //helper method to check letter equality
+    private boolean checkFirstLetterEquality(String name_unknown_starting_letter, String letter_check_against){
+        boolean letters_equal = false;
+        String first_letter = name_unknown_starting_letter.substring(0,1);
+        if (first_letter.equals(letter_check_against)){
+            letters_equal = true;
+        }
+        return letters_equal;
+    }
+
 //    //helper method to check name equality
 //    private boolean checkNameEquality(String name_unknown, String name_check_against){}
 //    boolean names_equal = false;
@@ -42,15 +52,18 @@ public class Information {
 
     //helper method to check rank equality
 
+    //helper method to get rank
+    //helper method to get
+
     //Helper method for doing file loops
-    private File[] rangeOfFilesToRangeOfYears() {
+    private File[] getArrayOfFiles() {
         File directory = new File("data/TestSets");
         return directory.listFiles();
     }
 
     //helper method to get array from file name
-    private String[][] getArrayFromFileName(File file){
-        return data.getArray(Integer.parseInt(file.getName().substring(3,7)));
+    private int getYearFromFileName(File file){
+        return Integer.parseInt(file.getName().substring(3,7));
     }
 
     public String topRankedName(int year, String gender){
@@ -81,7 +94,7 @@ public class Information {
     //Method to perform the gender/starting letter algorithm
     //Edge cases - gender/letter combo doesn't exist
     //Year isn't in dataset!
-    public String letter(int year, String gender,String letter) throws FileNotFoundException {
+    public String letter(int year, String gender,String letter){
         String[][] name_arr = data.getArray(year);
         if (!isFileValid(name_arr)){
             return "There is an error with the specified file(s)";
@@ -99,7 +112,7 @@ public class Information {
         // (last column entry) to the total counter
         for (String[] rows : name_arr) {
             //check starting letter method?
-            if (checkGenderEquality(rows[1],gender) && rows[0].substring(0, 1).equals(letter)) {
+            if (checkGenderEquality(rows[1],gender) && checkFirstLetterEquality(rows[0],letter)) {
                 nameCounter++;
                 totalCounter += Integer.parseInt(rows[2]);
                 does_combination_exist = true;
@@ -121,13 +134,13 @@ public class Information {
     //name doesn't exist in file - resolved
     //gender doesn't exist in the file - resolved
 
-    public String nameGenderRank(String name, String gender) throws FileNotFoundException {
+    public String nameGenderRank(String name, String gender){
         //test on ssa_2000s
-        //have to define ret here cuz if I do it in the loop I can't call it in the print statement 
+        //have to define ret here cuz if I do it in the loop I can't call it in the print statement
         List<Integer> ret  = new ArrayList<>();
-        File[] list_of_files = rangeOfFilesToRangeOfYears();
-        for (File current_file : list_of_files) {
-            String[][] name_arr = getArrayFromFileName(current_file);
+        File[] array_of_files = getArrayOfFiles();
+        for (File current_file : array_of_files) {
+            String[][] name_arr = data.getArray(getYearFromFileName(current_file));
             if (!isFileValid(name_arr)){
                 return "There is an error with the specified file(s)";
             }
@@ -156,7 +169,7 @@ public class Information {
     //Year doesn't exist - unresolved
     //What if a rank exists in one file but not another - resolved
     //What if a name/gender doesn't exist in the specified year OR recent year- good
-    public String nameGenderPair(int year, String name, String gender) throws FileNotFoundException {
+    public String nameGenderPair(int year, String name, String gender) {
         //get the most recent year
         boolean check_year = false;
         boolean check_recent = false;
@@ -164,27 +177,35 @@ public class Information {
                 ", or the ranking of this combination does not correspond to an existing rank in the most recent year.";
         int max = 0;
         int year_rank = 0;
-        File dir = new File("data/ssa_2000s");
-        File[] directoryListing = dir.listFiles();
-        for (File child : directoryListing) {
-            int curr = Integer.parseInt(child.getName().substring(3, 7));
-            if (curr > max) {
-                max = curr;
-            }
-        }
 
+        //HAVE A HELPER METHOD TO RUN MAX ALGO FOR A SET OF FILES?
+        File[] array_of_files = getArrayOfFiles();
+        List<Integer> years = new ArrayList<>();
+        for (File current_file : array_of_files) {
+            years.add(getYearFromFileName(current_file));
+        }
+        max = Collections.max(years);
+
+        //HAVE A HELPER METHOD TO GET THE RANK GIVEN A NAME AND A YEAR?
         //get the rank of the name within the year in question
         String[][] year_arr = data.getArray(year);
+        if (!isFileValid(year_arr)){
+            return "There is an error with the specified file(s)";
+        }
         for (String[] rows : year_arr) {
-            if (rows[0].equals(name) && rows[1].equals(gender)) {
+            if (rows[0].equals(name) && checkGenderEquality(rows[1],gender)) {
                 check_year = true;
                 year_rank = Integer.parseInt(rows[3]);
                 break;
             }
         }
 
+        //HAVE A HELPER METHOD TO RETRIEVE THE NAME/GENDER/(and possible instacnes) FOR A GIVEN RANK AND GIVEN YEAR?
         //go to the most recent year and get the name/gender at that rank
         String[][] recent_arr = data.getArray(max);
+        if (!isFileValid(recent_arr)){
+            return "There is an error with the specified file(s)";
+        }
         for (String[] rows : recent_arr) {
             if (Integer.parseInt(rows[3]) == year_rank && rows[1].equals(gender)) {
                 check_recent = true;
@@ -203,38 +224,26 @@ public class Information {
 
     //works, need to design the return part better
     //edge cases
-    //year not in dataset - unresolved
+    //year not in dataset - resolved
     //gender not in dataset - resolved
-    public String rangeOfYears(int start, int end, String gender) throws FileNotFoundException {
+    public String rangeOfYears(int start, int end, String gender) {
         Map<String, Integer> rank_map = new HashMap<>();
-        Map<String, Integer> ret = new HashMap<>();
-        boolean check = false;
-        //File dir = new File("data/ssa_2000s");
-        //File[] directoryListing = dir.listFiles();
+        boolean does_gender_exist = false;
         for (int year = start; year <= end; year++) {
-            //String[][] curr_arr = getArray(Integer.parseInt(child.getName().substring(3, 7)));
             String[][] curr_arr = data.getArray(year);
-            if (gender.equals("F")) {
-                check = true;
-                String top = curr_arr[0][0];
-                if (rank_map.containsKey(top)) {
-                    rank_map.put(top, rank_map.get(top) + 1);
-                } else {
-                    rank_map.put(top, 1);
-                }
-            } else if (gender.equals("M")){
-                check = true;
-                for (String[] rows : curr_arr) {
-                    if (rows[1].equals("M")) {
-                        String top = rows[0];
-                        if (rank_map.containsKey(top)) {
-                            rank_map.put(top, rank_map.get(top) + 1);
-                        } else {
-                            rank_map.put(top, 1);
-                        }
-                        break;
-                    }
-                }
+            if (!isFileValid(curr_arr)){
+                return "There is an error with the specified file(s)";
+            }
+            if (checkGenderEquality(gender, "F")){
+                does_gender_exist = true;
+                //get the top ranked female name
+                String top = topRankedName(year,gender);
+                rank_map.put(top,rank_map.getOrDefault(top,0)+1);
+            }
+            else if (checkGenderEquality(gender,"M")){
+                does_gender_exist=  true;
+                String top = topRankedName(year, gender);
+                rank_map.put(top, rank_map.getOrDefault(top,0)+1);
             }
         }
 
@@ -245,23 +254,15 @@ public class Information {
         }
          */
 
-        //need to design this better
-        //we need to go into the the map, find the max value, and then get all keys associated with that value
-        //for now, lets return in key:value format like above
-        int max = 0;
-        for (String key : rank_map.keySet()) {
-            if (rank_map.get(key) > max) {
-                max = rank_map.get(key);
-            }
-        }
-
+        Map<String, Integer> ret = new HashMap<>();
+        int max = Collections.max(rank_map.values());
         for (String key : rank_map.keySet()) {
             if (rank_map.get(key) == max) {
                 ret.put(key, rank_map.get(key));
             }
         }
 
-        if (check) {
+        if (does_gender_exist) {
             for (Map.Entry entry : ret.entrySet()) {
                 //System.out.println("key: " + entry.getKey() + "; value: " + entry.getValue());
                 return "From " + start + " to " + end + " for gender " + gender + ", the most popular name was " + entry.getKey() + " and it had the top rank " + entry.getValue() + " times";
@@ -273,24 +274,24 @@ public class Information {
         return "";
     }
 
+
     //edge cases
-    //year not in data set - unresolved
+    //year not in data set - resolved
     //no girls in the dataset
-    public String popularGirls(int start, int end) throws FileNotFoundException {
+    public String popularGirls(int start, int end) {
         boolean check = false;
         Map<String, Integer> letter_map = new TreeMap<>();
         for (int year = start; year <= end; year++) {
             String[][] curr_arr = data.getArray(year);
+            if (!isFileValid(curr_arr)){
+                return "There is an error with the specified file(s)";
+            }
             for (String[] rows : curr_arr) {
-                if (rows[1].equals("F")) {
+                if (checkGenderEquality(rows[1],"F")) {
                     check = true;
                     //just check if length of return is >0
                     String letter = rows[0].substring(0, 1);
-                    if (letter_map.containsKey(letter)) {
-                        letter_map.put(letter, letter_map.get(letter) + Integer.parseInt(rows[2]));
-                    } else {
-                        letter_map.put(letter, Integer.parseInt(rows[2]));
-                    }
+                    letter_map.put(letter, letter_map.getOrDefault(letter,0)+Integer.parseInt(rows[2]));
                 }
             }
         }
@@ -301,13 +302,14 @@ public class Information {
         // seems innefficent - should we have stored the name somewhere?
         //now, if we have ties -> thus will always give us alphabetically first because of the treeset
 
+
         //lambda
-        int max =0;
         String letter_max = "";
+        int max = Collections.max(letter_map.values());
         for (String key: letter_map.keySet()){
-            if (letter_map.get(key) > max){
-                max = letter_map.get(key);
+            if (letter_map.get(key) == max){
                 letter_max = key;
+                break;
             }
         }
 
@@ -317,7 +319,7 @@ public class Information {
         for (int year = start; year <= end; year++) {
             String[][] curr_arr = data.getArray(year);
             for (String[] rows : curr_arr) {
-                if (rows[1].equals("F") && rows[0].substring(0, 1).equals(letter_max)) {
+                if ((checkGenderEquality(rows[1],"F") && checkFirstLetterEquality(rows[0],letter_max))) {
                     ret.add(rows[0]);
                 }
             }
@@ -335,6 +337,8 @@ public class Information {
             return "There are no females in this dataset";
         }
     }
+
+    
 
 
 }
