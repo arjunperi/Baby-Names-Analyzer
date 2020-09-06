@@ -4,7 +4,7 @@ Anna,F,4923
 Margaret,F,4424
 Ruth,F,3974
 Elizabeth,F,3216
-Marie,M,3157
+Marie,F,3157
 Florence,F,3131
 Ethel,F,3067
 Lillian,F,2681

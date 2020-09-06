@@ -43,6 +43,45 @@ public class Information {
         return letters_equal;
     }
 
+    private List firstLetterHelper(String[][] name_array, String gender, String letter, String type) {
+        List checked_rows = new ArrayList();
+        for (String[] rows : name_array) {
+            if ((checkGenderEquality(rows[1], gender) && checkFirstLetterEquality(rows[0], letter))) {
+                //need the total instances, but also need all the names
+                if (type.equals("instances")) {
+                    checked_rows.add(rows[2]);
+                    //checked_row=rows
+                } else {
+                    checked_rows.add(rows[0]);
+                }
+            }
+        }
+        return checked_rows;
+    }
+
+    //helper method that does a lot of loop/comparison work for me:
+    // loops through a name_array and checks for any type of equality
+    private List getRowAtSpecifiedEqualityCheck(String[][] name_array, String check, String check_one, String check_two){
+        List checked_rows = new ArrayList();
+        for (String[] rows: name_array){
+
+            if (check.equals("name & gender")) {
+                if (rows[0].equals(check_one) && checkGenderEquality(rows[1], check_two)) {
+                    checked_rows.add(rows);
+                    // checked_row = rows;
+                }
+            }
+
+            if (check.equals("rank & gender")){
+                if (rows[3].equals(check_one) && rows[1].equals(check_two)){
+                    checked_rows.add(rows);
+                    //checked_row=rows;
+                }
+            }
+        }
+        return checked_rows;
+    }
+
 //    //helper method to check name equality
 //    private boolean checkNameEquality(String name_unknown, String name_check_against){}
 //    boolean names_equal = false;
@@ -110,18 +149,20 @@ public class Information {
 
         //Go through the rows of 2D array, and for a row if the gender and starting letter of the name match the inputs, add 1 to the name counter and the count field
         // (last column entry) to the total counter
-        for (String[] rows : name_arr) {
-            //check starting letter method?
-            if (checkGenderEquality(rows[1],gender) && checkFirstLetterEquality(rows[0],letter)) {
-                nameCounter++;
-                totalCounter += Integer.parseInt(rows[2]);
-                does_combination_exist = true;
+        List <String> checked_list = firstLetterHelper(name_arr,gender, letter, "instances");
+        if (checked_list.size()>0){
+            //maybe duplicate this elsewhere ?
+            //now I have an array list with all the nam
+            for (String instances: checked_list){
+                totalCounter += Integer.parseInt(instances);
             }
+            does_combination_exist = true;
         }
 
         //If the combination exists, format string as follows
         if (does_combination_exist){
-            ret = "For gender " + gender + " and starting letter " + letter + ", there are " + nameCounter + " different names and " + totalCounter + " total instances";
+            //ret = "For gender " + gender + " and starting letter " + letter + ", there are " + nameCounter + " different names and " + totalCounter + " total instances";
+            ret = "For gender " + gender + " and starting letter " + letter + ", there are " + checked_list.size() + " different names and " + totalCounter + " total instances";
         }
 
         return ret;
@@ -147,13 +188,13 @@ public class Information {
             //loop through the array and get the rank associated with a name and gender
             //HAVE A NAME EQUALS METHOD?
             boolean does_name_gender_combo_exist = false;
-            for (String[] rows: name_arr) {
-                if (rows[0].equals(name) && checkGenderEquality(rows[1],gender)) {
-                    ret.add(Integer.parseInt(rows[3]));
-                    does_name_gender_combo_exist= true;
-                    break;
-                }
+
+            List<String[]> checked_list = getRowAtSpecifiedEqualityCheck(name_arr, "name & gender", name, gender);
+            if (checked_list.size()>0){
+                ret.add(Integer.parseInt(checked_list.get(0)[3]));
+                does_name_gender_combo_exist = true;
             }
+
             if (!does_name_gender_combo_exist){
                 ret.add(0);
             }
@@ -192,12 +233,10 @@ public class Information {
         if (!isFileValid(year_arr)){
             return "There is an error with the specified file(s)";
         }
-        for (String[] rows : year_arr) {
-            if (rows[0].equals(name) && checkGenderEquality(rows[1],gender)) {
-                check_year = true;
-                year_rank = Integer.parseInt(rows[3]);
-                break;
-            }
+        List<String[]> year_checked_list = getRowAtSpecifiedEqualityCheck(year_arr, "name & gender", name, gender);
+        if (year_checked_list.size()>0){
+            check_year = true;
+            year_rank = (Integer.parseInt(year_checked_list.get(0)[3]));
         }
 
         //HAVE A HELPER METHOD TO RETRIEVE THE NAME/GENDER/(and possible instacnes) FOR A GIVEN RANK AND GIVEN YEAR?
@@ -206,14 +245,14 @@ public class Information {
         if (!isFileValid(recent_arr)){
             return "There is an error with the specified file(s)";
         }
-        for (String[] rows : recent_arr) {
-            if (Integer.parseInt(rows[3]) == year_rank && rows[1].equals(gender)) {
-                check_recent = true;
-                ret = rows[0];
-                break;
-            }
+
+        List<String[]> recent_checked_list = getRowAtSpecifiedEqualityCheck(recent_arr, "name & gender", name, gender);
+        if (recent_checked_list.size()>0){
+            check_year = true;
+            year_rank = (Integer.parseInt(recent_checked_list.get(0)[3]));
         }
 
+//
         if (check_recent && check_year){
             return "The combination of name " + name + " and gender " + gender + " in " + year + " corresponds to the same popularity as the name " + ret + " in the most recent year in the dataset.";
         }
@@ -286,12 +325,16 @@ public class Information {
             if (!isFileValid(curr_arr)){
                 return "There is an error with the specified file(s)";
             }
+
             for (String[] rows : curr_arr) {
                 if (checkGenderEquality(rows[1],"F")) {
                     check = true;
                     //just check if length of return is >0
                     String letter = rows[0].substring(0, 1);
                     letter_map.put(letter, letter_map.getOrDefault(letter,0)+Integer.parseInt(rows[2]));
+                }
+                else{
+                    return "There are no females in this dataset";
                 }
             }
         }
@@ -318,11 +361,19 @@ public class Information {
         Set<String> ret = new TreeSet<>();
         for (int year = start; year <= end; year++) {
             String[][] curr_arr = data.getArray(year);
-            for (String[] rows : curr_arr) {
-                if ((checkGenderEquality(rows[1],"F") && checkFirstLetterEquality(rows[0],letter_max))) {
-                    ret.add(rows[0]);
+            List<String> checked_list = firstLetterHelper(curr_arr,"F",letter_max,"names");
+            if (checked_list.size()>0){
+                for (String names: checked_list){
+                    ret.add(names);
                 }
+
             }
+
+//            for (String[] rows : curr_arr) {
+//                if ((checkGenderEquality(rows[1],"F") && checkFirstLetterEquality(rows[0],letter_max))) {
+//                    ret.add(rows[0]);
+//                }
+//            }
         }
 
         for (Map.Entry entry : letter_map.entrySet())
@@ -333,15 +384,36 @@ public class Information {
         if (check) {
             return "From " + start + " to " + end + ", the most popular letter that girls' names started with was " + letter_max + ", and the female names in the dataset starting with " + letter_max + " are: " + ret.toString();
         }
-        else{
-            return "There are no females in this dataset";
-        }
+        return "";
+//        else{
+//            return "There are no females in this dataset";
+//        }
     }
 
-    
+    public String nameGenderRankingsInRange(String name, String gender, int start, int end){
+        List rankings = new ArrayList();
+        for (int year = start; year <= end; year++) {
+            String[][] curr_arr = data.getArray(year);
+            if (!isFileValid(curr_arr)){
+                return "There is an error with the specified file(s)";
+            }
+            for (String[] rows: curr_arr){
+                if (rows[0].equals(name) && checkGenderEquality(rows[1],"F")){
+                    rankings.add(rows[3]);
+                }
+            }
+        }
 
-
+        return "From " + start + " to " + end + " the name " + name + " and gender " + gender + " had the following rankings, with 0 indicating the combination did" +
+                " not exist for that year: " + rankings.toString();
+    }
 }
 
+//check name and gender equality
+//check gender equality and first letter
+//check gender eqaulity
+//check rank and gender equality
+
+//helper method could do the loop and retunr the
 
 

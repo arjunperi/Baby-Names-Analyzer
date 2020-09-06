@@ -18,10 +18,11 @@ public class Main {
         //System.out.println(info.topRankedName(19001,"M"));
         //System.out.println(instance.maleTopRanked());
         //System.out.println(info.letter(1901,"F","M"));
-        //System.out.println(info.nameGenderRank("xyz","F"));
+        //System.out.println(info.nameGenderRank("Emily","F"));
         //System.out.println(info.nameGenderPair(1901,"xyz", "L"));
         //System.out.println(info.rangeOfYears(1900,19012, "F"));
-        //System.out.println(info.popularGirls(19003,19004));
+        System.out.println(info.popularGirls(19001,19001));
+        //System.out.println(info.nameGenderRankingsInRange("Mary","F",1900,1901));
     }
 }
 
