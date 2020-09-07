@@ -30,13 +30,13 @@ class MainTest {
 //        assertEquals("The top ranked male name is: John", info.maleTopRanked(1900));
 //        assertEquals("The top ranked male name is: Jacob", info.maleTopRanked(2000));
 //    }
-
-    @Test
-    void letter() throws FileNotFoundException {
-        assertEquals("Gender L and starting letter M combination does not exist for this dataset", info.letter(19002, "L", "M"));
-        assertEquals("For gender F and starting letter M, there are 2 different names and 17560 total instances", info.letter(1901, "F", "M"));
-        assertEquals("For gender M and starting letter J, there are 3 different names and 20788 total instances", info.letter(19001, "M", "J"));
-    }
+//
+//    @Test
+//    void letter() throws FileNotFoundException {
+//        assertEquals("Gender L and starting letter M combination does not exist for this dataset", info.letter(19002, "L", "M"));
+//        assertEquals("For gender F and starting letter M, there are 2 different names and 17560 total instances", info.letter(1901, "F", "M"));
+//        assertEquals("For gender M and starting letter J, there are 3 different names and 20788 total instances", info.letter(19001, "M", "J"));
+//    }
 
 
     @Test
@@ -47,17 +47,17 @@ class MainTest {
      }
 
 
-    @Test
-    void nameGenderPair() throws FileNotFoundException {
-        //invalid entry - doesn't exist in either
-        assertEquals("Either the combination of name xyz and gender L in 1901 does not exist for the specified year / the most recent year in this dataset, " +
-                "or the ranking of this combination does not correspond to an existing rank in the most recent year.", info.nameGenderPair(1901, "xyz", "L"));
-        //invalid entry - ranking of specified does not correspond to a valid rank in the most recent year
-        //assertEquals("Either the combination of name Arjun and gender M in 20001 does not exist for the specified year / the most recent year in this dataset, " +
-                //"or the ranking of this combination does not correspond to an existing rank in the most recent year.", info.nameGenderPair(20001, "Arjun", "M"));
-        //assertEquals("The combination of name Michael and gender M in 2000 corresponds to the same popularity as the name Ethan in the most recent year in the dataset." , info.nameGenderPair(2000,"Michael", "M"));
-
-    }
+//    @Test
+//    void nameGenderPair() throws FileNotFoundException {
+//        //invalid entry - doesn't exist in either
+//        assertEquals("Either the combination of name xyz and gender L in 1901 does not exist for the specified year / the most recent year in this dataset, " +
+//                "or the ranking of this combination does not correspond to an existing rank in the most recent year.", info.nameGenderPair(1901, "xyz", "L"));
+//        //invalid entry - ranking of specified does not correspond to a valid rank in the most recent year
+//        //assertEquals("Either the combination of name Arjun and gender M in 20001 does not exist for the specified year / the most recent year in this dataset, " +
+//                //"or the ranking of this combination does not correspond to an existing rank in the most recent year.", info.nameGenderPair(20001, "Arjun", "M"));
+//        //assertEquals("The combination of name Michael and gender M in 2000 corresponds to the same popularity as the name Ethan in the most recent year in the dataset." , info.nameGenderPair(2000,"Michael", "M"));
+//
+//    }
 
 //    //possibly need to do a test over more years to test for ties
 //    @Test

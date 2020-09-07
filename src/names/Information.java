@@ -41,8 +41,8 @@ public class Information {
         return letters_equal;
     }
 
-    private List firstLetterHelper(String[][] name_array, String gender, String letter, String type) {
-        List checked_rows = new ArrayList();
+    private List<String> firstLetterHelper(String[][] name_array, String gender, String letter, String type) {
+        List<String> checked_rows = new ArrayList();
         for (String[] rows : name_array) {
             if ((checkGenderEquality(rows[1], gender) && checkFirstLetterEquality(rows[0], letter))) {
                 //need the total instances, but also need all the names
@@ -168,7 +168,7 @@ public class Information {
         }
         return set;
     }
-    
+
     private double average(List<Integer> rankings) {
         int sum = 0;
         int count = 0;
@@ -180,73 +180,45 @@ public class Information {
         return average;
     }
 
-    public String topRankedName(int year, String gender) {
-        String[][] name_arr = data.getArray(year);
-        if (!isFileValid(name_arr)) {
-            return "There is an error with the specified file(s)";
-        }
 
-        String top_ranked_name = "";
-        if (checkGenderEquality(gender, "F")) {
-            top_ranked_name = "There are no females in this dataset";
-            if (checkGenderEquality(name_arr[0][1], "F")) {
-                top_ranked_name = "The top ranked female name is: " + name_arr[0][0];
-            }
 
-        } else {
-            top_ranked_name = "There are no males in this dataset";
-            List<String[]> recent_checked_list = getRowAtSpecifiedEqualityCheck(name_arr, "just gender", gender, null);
-            if (recent_checked_list.size() > 0) {
-                top_ranked_name = "The top ranked male name is: " + recent_checked_list.get(0)[0];
-            }
-            for (String[] rows : name_arr) {
-                if (checkGenderEquality(rows[1], "M")) {
-                    top_ranked_name = "The top ranked male name is: " + rows[0];
-                    break;
-                }
-            }
-        }
-        return top_ranked_name;
+    //doesn't give file error message
+    public void topRankedName(int year, String gender) {
+        List<String> top_ranked_name =  namesAtRankInRange(year,year,gender,1);
+        System.out.println(top_ranked_name);
     }
 
 
-    //Method to perform the gender/starting letter algorithm
-    //Edge cases - gender/letter combo doesn't exist
-    //Year isn't in dataset!
-    public String letter(int year, String gender, String letter) {
+
+    //gender/letter combo doesn't exist
+    //Year isn't in dataset
+    public List<Integer> letter(int year, String gender, String letter) {
         String[][] name_arr = data.getArray(year);
+        List<Integer> ret = new ArrayList<>();
         if (!isFileValid(name_arr)) {
-            return "There is an error with the specified file(s)";
+//            System.out.println("There is an error with the specified file(s)");
+//            return;
+            ret.add(-1);
+            return ret;
         }
 
-        //Intialize return string to indicate that the given combination does not exist
-        String ret = "Gender " + gender + " and starting letter " + letter + " combination does not exist for this dataset";
-
-        //Initialize counters and checking field to 0/false
-        int nameCounter = 0;
         int totalCounter = 0;
-        boolean does_combination_exist = false;
-
-        //Go through the rows of 2D array, and for a row if the gender and starting letter of the name match the inputs, add 1 to the name counter and the count field
-        // (last column entry) to the total counter
+        //String ret = "Gender " + gender + " and starting letter " + letter + " combination does not exist for this dataset";
         List<String> checked_list = firstLetterHelper(name_arr, gender, letter, "instances");
         if (checked_list.size() > 0) {
-            //maybe duplicate this elsewhere ?
-            //now I have an array list with all the nam
             for (String instances : checked_list) {
                 totalCounter += Integer.parseInt(instances);
             }
-            does_combination_exist = true;
+            //ret = "For gender " + gender + " and starting letter " + letter + ", there are " + checked_list.size() + " different names and " + totalCounter + " total instances";
+            ret.add(totalCounter);
         }
-
-        //If the combination exists, format string as follows
-        if (does_combination_exist) {
-            //ret = "For gender " + gender + " and starting letter " + letter + ", there are " + nameCounter + " different names and " + totalCounter + " total instances";
-            ret = "For gender " + gender + " and starting letter " + letter + ", there are " + checked_list.size() + " different names and " + totalCounter + " total instances";
+        else{
+            ret.add(0);
         }
-
         return ret;
     }
+
+
 
 
     //Works - file name assumption?
@@ -255,91 +227,43 @@ public class Information {
     //name doesn't exist in file - resolved
     //gender doesn't exist in the file - resolved
     public String nameGenderRank(String name, String gender) {
-        //test on ssa_2000s
+        //Put in readme where to change
         //have to define ret here cuz if I do it in the loop I can't call it in the print statement
         List<Integer> ret = new ArrayList<>();
         File[] array_of_files = getArrayOfFiles();
         for (File current_file : array_of_files) {
-            String[][] name_arr = data.getArray(getYearFromFileName(current_file));
-            if (!isFileValid(name_arr)) {
-                return "There is an error with the specified file(s)";
-            }
-            //loop through the array and get the rank associated with a name and gender
-            //HAVE A NAME EQUALS METHOD?
-            boolean does_name_gender_combo_exist = false;
-
-            List<String[]> checked_list = getRowAtSpecifiedEqualityCheck(name_arr, "name & gender", name, gender);
-            if (checked_list.size() > 0) {
-                ret.add(getRankFromCheckedList(checked_list));
-                does_name_gender_combo_exist = true;
-            }
-
-            if (!does_name_gender_combo_exist) {
-                ret.add(0);
-            }
-
+            int year = getYearFromFileName(current_file);
+            ret.addAll(nameGenderRankingsInRange(name, gender, year, year));
+        }
+            return "The rankings for the name " + name + " and gender " + gender + " are: " + ret.toString() + ", with rank -1 indicating the name/gender combination does" +
+                    " not exist for a year.";
         }
 
-        //over the span....?
-        return "The rankings for the name " + name + " and gender " + gender + " are: " + ret.toString() + ", with rank 0 indicating the name/gender combination does" +
-                " not exist for a year.";
-    }
 
     //Works - file name assumption?
     //Year doesn't exist - unresolved
     //What if a rank exists in one file but not another - resolved
     //What if a name/gender doesn't exist in the specified year OR recent year- good
-    public String nameGenderPair(int year, String name, String gender) {
-        //get the most recent year
-        boolean check_year = false;
-        boolean check_recent = false;
-        String ret = "Either the combination of name " + name + " and gender " + gender + " in " + year + " does not exist for the specified year / the most recent year in this dataset" +
-                ", or the ranking of this combination does not correspond to an existing rank in the most recent year.";
-        int max = 0;
-        int year_rank = 0;
+    public void nameGenderPair(int year, String name, String gender) {
+        List<Integer> year_rank = nameGenderRankingsInRange(name,gender,year,year);
 
-        //HAVE A HELPER METHOD TO RUN MAX ALGO FOR A SET OF FILES?
         File[] array_of_files = getArrayOfFiles();
         List<Integer> years = new ArrayList<>();
+        int max = 0;
         for (File current_file : array_of_files) {
             years.add(getYearFromFileName(current_file));
         }
         max = Collections.max(years);
 
-        //HAVE A HELPER METHOD TO GET THE RANK GIVEN A NAME AND A YEAR?
-        //get the rank of the name within the year in question
-        String[][] year_arr = data.getArray(year);
-        if (!isFileValid(year_arr)) {
-            return "There is an error with the specified file(s)";
+        //make this a helper
+        List<List<String>> recent_name = new ArrayList<>();
+        for (int rank : year_rank){
+            recent_name.add(namesAtRankInRange(max,max,gender,rank));
         }
-        List<String[]> year_checked_list = getRowAtSpecifiedEqualityCheck(year_arr, "name & gender", name, gender);
-        if (year_checked_list.size() > 0) {
-            check_year = true;
-            year_rank = getRankFromCheckedList(year_checked_list);
-        }
-
-        //HAVE A HELPER METHOD TO RETRIEVE THE NAME/GENDER/(and possible instacnes) FOR A GIVEN RANK AND GIVEN YEAR?
-        //go to the most recent year and get the name/gender at that rank
-        String[][] recent_arr = data.getArray(max);
-        if (!isFileValid(recent_arr)) {
-            return "There is an error with the specified file(s)";
-        }
-
-        List<String[]> recent_checked_list = getRowAtSpecifiedEqualityCheck(recent_arr, "name & gender", name, gender);
-        if (recent_checked_list.size() > 0) {
-            check_year = true;
-            year_rank = getRankFromCheckedList(recent_checked_list);
-        }
-
-        if (check_recent && check_year) {
-            return "The combination of name " + name + " and gender " + gender + " in " + year + " corresponds to the same popularity as the name " + ret + " in the most recent year in the dataset.";
-        } else {
-            return ret;
-        }
+       System.out.println(recent_name);
     }
 
-    //works, need to design the return part better
-    //edge cases
+
     //year not in dataset - resolved
     //gender not in dataset - resolved
     public void rangeOfYears(int start, int end, String gender) {
@@ -350,52 +274,32 @@ public class Information {
     //edge cases
     //year not in data set - resolved
     //no girls in the dataset
-    public String popularGirls(int start, int end) {
-        boolean check_if_females_exist = false;
+    public List<String> popularGirls(int start, int end) {
         Map<String, Integer> letter_map = new TreeMap<>();
         for (int year = start; year <= end; year++) {
-            String[][] curr_arr = data.getArray(year);
-            if (!isFileValid(curr_arr)) {
-                return "There is an error with the specified file(s)";
+            for (char letter_char = 'A'; letter_char < 'Z'; letter_char++) {
+                String letter_as_string = String.valueOf(letter_char);
+                letter_map.put(letter_as_string, letter_map.getOrDefault(letter_as_string, 0) + letter(year, "F", String.valueOf(letter_char)).get(0));
             }
+        }
+        List<String> top_letters = keysWithMaxValues("int", letter_map, null);
 
-            List<String[]> recent_checked_list = getRowAtSpecifiedEqualityCheck(curr_arr, "just gender", "F", "");
-            if (recent_checked_list.size() > 0) {
-                check_if_females_exist = true;
-                for (String[] rows : recent_checked_list) {
-                    String letter = rows[0].substring(0, 1);
-                    letter_map.put(letter, letter_map.getOrDefault(letter, 0) + Integer.parseInt(rows[2]));
+        List names_max = new ArrayList();
+        for (String letters : top_letters) {
+            for (int year = start; year <= end; year++) {
+                String[][] name_array = data.getArray(year);
+                if (!isFileValid(name_array)) {
+                    names_max.add("There is an error with the specified file(s)");
+                    return names_max;
                 }
-            } else {
-                return "There are no females in this dataset";
+                names_max = firstLetterHelper(name_array, "F", letters, "names");
             }
+            break;
         }
-
-        String letter_max = keysWithMaxValues("int", letter_map, null).get(0);
-
-        //use get or lambda
-        //see other methods that use this
-        Set<String> ret = new TreeSet<>();
-        for (int year = start; year <= end; year++) {
-            String[][] curr_arr = data.getArray(year);
-            List<String> checked_list = firstLetterHelper(curr_arr, "F", letter_max, "names");
-            if (checked_list.size() > 0) {
-                for (String names : checked_list) {
-                    ret.add(names);
-                }
-
-            }
-        }
-
-        for (Map.Entry entry : letter_map.entrySet()) {
-            System.out.println("key: " + entry.getKey() + "; value: " + entry.getValue());
-        }
-
-        if (check_if_females_exist) {
-            return "From " + start + " to " + end + ", the most popular letter that girls' names started with was " + letter_max + ", and the female names in the dataset starting with " + letter_max + " are: " + ret.toString();
-        }
-        return "";
+        return names_max;
     }
+
+
 
     //EdgeCases - name & gender combo doesn't exist
     public List<Integer> nameGenderRankingsInRange(String name, String gender, int start, int end) {
@@ -410,9 +314,12 @@ public class Information {
             if (recent_checked_list.size() > 0) {
                 rankings.add(Integer.parseInt(recent_checked_list.get(0)[3]));
             }
+            else{
+                rankings.add(-1);
+            }
         }
         if (rankings.size() == 0) {
-            rankings.add(-1);
+            rankings.add(-3);
         }
         return rankings;
 
@@ -487,7 +394,7 @@ public class Information {
         }
 
         //FOR ALL YEARS
-        if (rankings.contains(-1)) {
+        if (rankings.contains(-3)) {
             System.out.println("The name and gender combination could not be found");
             return;
         }
@@ -528,25 +435,11 @@ public class Information {
     public List<String> namesAtRankInRange(int start, int end, String gender, int rank) {
         List<String> names_in_range = getListOfNamesInRange(start, end, gender);
 
-
-//        if (names_in_range.contains("-2")){
-//            names_in_range.clear();
-//            names_in_range.add("There is an error with the specified file(s)");
-//            return names_in_range;
-//        }
-//
-//        if (names_in_range.contains("-1")){
-//            names_in_range.clear();
-//            names_in_range.add("The gender was not found for the given range of years for this dataset");
-//            return names_in_range;
-//        }
-
-        //Set<String> names_with_matching_rank = new HashSet<>();
         List<String> names_with_matching_rank = new ArrayList<>();
         for (String names : names_in_range) {
             List<Integer> rankings = nameGenderRankingsInRange(names, gender, start, end);
-            if (rankings.contains(-1)) {
-                names_with_matching_rank.add("The rank was not found for the given range of years for this dataset");
+            if (rankings.contains(-3)) {
+                names_with_matching_rank.add("The gender/rank was not found for the given range of years for this dataset");
                 return names_with_matching_rank;
             }
             if (rankings.contains(rank)) {
@@ -554,7 +447,7 @@ public class Information {
             }
         }
         if (names_with_matching_rank.size() == 0) {
-            names_with_matching_rank.add("The rank was not found for the given range of years for this dataset");
+            names_with_matching_rank.add("The gender/rank was not found for the given range of years for this dataset");
         }
         return names_with_matching_rank;
     }
@@ -569,15 +462,6 @@ public class Information {
             names_with_count.put(names, names_with_count.getOrDefault(names, 0) + 1);
         }
         List<String> most_popular_names = keysWithMaxValues("int", names_with_count, null);
-
-
-//        int names_max = Collections.max(names_with_count.values());
-//        Set highest_rank_most_often = new HashSet();
-//        for (String names : names_with_count.keySet()) {
-//            if (names_with_count.get(names) == names_max) {
-//                highest_rank_most_often.add(names);
-//            }
-//        }
 
         List<String> ret  = new ArrayList<>();
         for (String names : most_popular_names) {
