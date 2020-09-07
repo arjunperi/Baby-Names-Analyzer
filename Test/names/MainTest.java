@@ -59,13 +59,13 @@ class MainTest {
 
     }
 
-    //possibly need to do a test over more years to test for ties
-    @Test
-    void rangeOfYears() throws FileNotFoundException {
-        assertEquals("From 1900 to 1901, gender L does not exist in the dataset", info.rangeOfYears(1900,1901,"L"));
-        assertEquals("From 1900 to 1900 for gender M, the most popular name was John and it had the top rank 1 times", info.rangeOfYears(1900,1900,"M"));
-        assertEquals("From 1900 to 1901 for gender F, the most popular name was Mary and it had the top rank 2 times", info.rangeOfYears(1900,1901,"F"));
-    }
+//    //possibly need to do a test over more years to test for ties
+//    @Test
+//    void rangeOfYears() throws FileNotFoundException {
+//        assertEquals("From 1900 to 1901, gender L does not exist in the dataset", info.rangeOfYears(1900,1901,"L"));
+//        assertEquals("From 1900 to 1900 for gender M, the most popular name was John and it had the top rank 1 times", info.rangeOfYears(1900,1900,"M"));
+//        assertEquals("From 1900 to 1901 for gender F, the most popular name was Mary and it had the top rank 2 times", info.rangeOfYears(1900,1901,"F"));
+//    }
 
     //test exceptions of year - unresolved
     //test exception of gender

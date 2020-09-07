@@ -1,7 +1,6 @@
 package names;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.*;
 
 public class Information {
@@ -24,7 +23,7 @@ public class Information {
             if (gender_unknown.equals("F")) {
                 genders_equal = true;
             }
-        } else {
+        } else if (gender_check_against.equals("M")) {
             if (gender_unknown.equals("M")) {
                 genders_equal = true;
             }
@@ -60,8 +59,8 @@ public class Information {
 
     //helper method that does a lot of loop/comparison work for me:
     // loops through a name_array and checks for any type of equality
-    private List getRowAtSpecifiedEqualityCheck(String[][] name_array, String check, String check_one, String check_two) {
-        List checked_rows = new ArrayList();
+    private List<String[]> getRowAtSpecifiedEqualityCheck(String[][] name_array, String check, String check_one, String check_two) {
+        List<String[]> checked_rows = new ArrayList();
         for (String[] rows : name_array) {
 
             if (check.equals("name & gender")) {
@@ -78,8 +77,8 @@ public class Information {
                 }
             }
 
-            if (check.equals("just gender")){
-                if (checkGenderEquality(rows[1],check_one)){
+            if (check.equals("just gender")) {
+                if (checkGenderEquality(rows[1], check_one)) {
                     checked_rows.add(rows);
                 }
             }
@@ -87,11 +86,11 @@ public class Information {
         return checked_rows;
     }
 
-    private int getRankFromCheckedList(List<String[]> year_checked_list){
+    private int getRankFromCheckedList(List<String[]> year_checked_list) {
         return Integer.parseInt(year_checked_list.get(0)[3]);
     }
 
-    private Map<String,Integer> getMapWithMaxValues(Map<String,Integer> map_unknown_max){
+    private Map<String, Integer> getMapWithMaxValues(Map<String, Integer> map_unknown_max) {
         Map<String, Integer> map_max_keys = new HashMap<>();
         int max = Collections.max(map_unknown_max.values());
         for (String key : map_unknown_max.keySet()) {
@@ -102,31 +101,31 @@ public class Information {
         return map_max_keys;
     }
 
-    private List<String> keysWithMaxValues(Map<String,Integer> map_unknown_max){
-        List<String> keys_max = new ArrayList<>();
-        int max_value = Collections.max(map_unknown_max.values());
-        List names_with_max_difference = new ArrayList();
-        for (String keys: map_unknown_max.keySet()) {
-            if (map_unknown_max.get(keys) == max_value) {
-                names_with_max_difference.add(keys);
+    private List<String> keysWithMaxValues(String indicator, Map<String, Integer> map_unknown_max_int, Map<String, Double> map_unknown_max_double) {
+        if (indicator.equals("int")) {
+            List<String> keys_max = new ArrayList<>();
+            int max_value = Collections.max(map_unknown_max_int.values());
+            List names_with_max_difference = new ArrayList();
+            for (String keys : map_unknown_max_int.keySet()) {
+                if (map_unknown_max_int.get(keys) == max_value) {
+                    names_with_max_difference.add(keys);
+                }
             }
+            return names_with_max_difference;
+        } else {
+            List<String> keys_max = new ArrayList<>();
+            double max_value = Collections.max(map_unknown_max_double.values());
+            List names_with_max_difference = new ArrayList();
+            for (String keys : map_unknown_max_double.keySet()) {
+                if (map_unknown_max_double.get(keys) == max_value) {
+                    names_with_max_difference.add(keys);
+                }
+            }
+            return names_with_max_difference;
         }
-        return names_with_max_difference;
+
     }
 
-
-
-//    //helper method to check name equality
-//    private boolean checkNameEquality(String name_unknown, String name_check_against){}
-//    boolean names_equal = false;
-//    if ()
-
-    //helper method to check letter equality
-
-    //helper method to check rank equality
-
-    //helper method to get rank
-    //helper method to get
 
     //Helper method for doing file loops
     private File[] getArrayOfFiles() {
@@ -139,27 +138,75 @@ public class Information {
         return Integer.parseInt(file.getName().substring(3, 7));
     }
 
+    private List<String> getListOfNamesInRange(int start, int end, String gender) {
+        List<String> names_in_range = new ArrayList<>();
+        //loop through years, if gender equal then add name to set
+        for (int year = start; year <= end; year++) {
+            String[][] curr_arr = data.getArray(year);
+            if (!isFileValid(curr_arr)) {
+                names_in_range.add("-2");
+                return names_in_range;
+            }
+            List<String[]> recent_checked_list = getRowAtSpecifiedEqualityCheck(curr_arr, "just gender", gender, "");
+            if (recent_checked_list.size() > 0) {
+                for (String[] rows : recent_checked_list) {
+                    String name = rows[0];
+                    names_in_range.add(name);
+                }
+            }
+        }
+        if (names_in_range.size() == 0) {
+            names_in_range.add("-1");
+        }
+        return names_in_range;
+    }
+
+    private Set<String> listToSet(List<String> list) {
+        Set<String> set = new HashSet<>();
+        for (String item : list) {
+            set.add(item);
+        }
+        return set;
+    }
+    
+    private double average(List<Integer> rankings) {
+        int sum = 0;
+        int count = 0;
+        for (int rank : rankings) {
+            sum += rank;
+            count++;
+        }
+        double average = (double) sum / count;
+        return average;
+    }
+
     public String topRankedName(int year, String gender) {
         String[][] name_arr = data.getArray(year);
         if (!isFileValid(name_arr)) {
             return "There is an error with the specified file(s)";
         }
-        String ret = "";
+
+        String top_ranked_name = "";
         if (checkGenderEquality(gender, "F")) {
-            ret = "There are no females in this dataset";
+            top_ranked_name = "There are no females in this dataset";
             if (checkGenderEquality(name_arr[0][1], "F")) {
-                ret = "The top ranked female name is: " + name_arr[0][0];
+                top_ranked_name = "The top ranked female name is: " + name_arr[0][0];
             }
+
         } else {
-            ret = "There are no males in this dataset";
+            top_ranked_name = "There are no males in this dataset";
+            List<String[]> recent_checked_list = getRowAtSpecifiedEqualityCheck(name_arr, "just gender", gender, null);
+            if (recent_checked_list.size() > 0) {
+                top_ranked_name = "The top ranked male name is: " + recent_checked_list.get(0)[0];
+            }
             for (String[] rows : name_arr) {
                 if (checkGenderEquality(rows[1], "M")) {
-                    ret = "The top ranked male name is: " + rows[0];
+                    top_ranked_name = "The top ranked male name is: " + rows[0];
                     break;
                 }
             }
         }
-        return ret;
+        return top_ranked_name;
     }
 
 
@@ -207,7 +254,6 @@ public class Information {
     //Edge cases -
     //name doesn't exist in file - resolved
     //gender doesn't exist in the file - resolved
-
     public String nameGenderRank(String name, String gender) {
         //test on ssa_2000s
         //have to define ret here cuz if I do it in the loop I can't call it in the print statement
@@ -285,7 +331,6 @@ public class Information {
             year_rank = getRankFromCheckedList(recent_checked_list);
         }
 
-//
         if (check_recent && check_year) {
             return "The combination of name " + name + " and gender " + gender + " in " + year + " corresponds to the same popularity as the name " + ret + " in the most recent year in the dataset.";
         } else {
@@ -297,67 +342,9 @@ public class Information {
     //edge cases
     //year not in dataset - resolved
     //gender not in dataset - resolved
-    public String rangeOfYears(int start, int end, String gender) {
-        Map<String, Integer> rank_map = new HashMap<>();
-        boolean does_gender_exist = false;
-        for (int year = start; year <= end; year++) {
-            String[][] curr_arr = data.getArray(year);
-            if (!isFileValid(curr_arr)) {
-                return "There is an error with the specified file(s)";
-            }
-            if (checkGenderEquality(gender, "F")) {
-                does_gender_exist = true;
-                //get the top ranked female name
-                String top = topRankedName(year, gender);
-                rank_map.put(top, rank_map.getOrDefault(top, 0) + 1);
-            } else if (checkGenderEquality(gender, "M")) {
-                does_gender_exist = true;
-                String top = topRankedName(year, gender);
-                rank_map.put(top, rank_map.getOrDefault(top, 0) + 1);
-            }
-        }
-
-        /*
-        for (Map.Entry entry : rank_map.entrySet())
-        {
-            System.out.println("key: " + entry.getKey() + "; value: " + entry.getValue());
-        }
-         */
-
-//        Map<String, Integer> ret = new HashMap<>();
-//        int max = Collections.max(rank_map.values());
-//        for (String key : rank_map.keySet()) {
-//            if (rank_map.get(key) == max) {
-//                ret.put(key, rank_map.get(key));
-//            }
-//        }
-
-//        Map<String, Integer> map_max_values = getMapWithMaxValues(rank_map);
-        int max = Collections.max(rank_map.values());
-        List<String> keys = keysWithMaxValues(rank_map);
-
-
-        if (does_gender_exist) {
-            for (String names: keys) {
-                //System.out.println("key: " + entry.getKey() + "; value: " + entry.getValue());
-                return "From " + start + " to " + end + " for gender " + gender + " " + names.toLowerCase() + " and it had the top rank " + max + " times";
-            }
-        } else {
-            return "From " + start + " to " + end + ", gender " + gender + " does not exist in the dataset";
-        }
-        return "";
+    public void rangeOfYears(int start, int end, String gender) {
+        System.out.println(rankMostOften(start, end, gender, 1));
     }
-
-//        if (does_gender_exist) {
-//            for (Map.Entry entry : map_max_values.entrySet()) {
-//                //System.out.println("key: " + entry.getKey() + "; value: " + entry.getValue());
-//                return "From " + start + " to " + end + " for gender " + gender + " " + entry.getKey().toString().toLowerCase() + " and it had the top rank " + entry.getValue() + " times";
-//            }
-//        } else {
-//            return "From " + start + " to " + end + ", gender " + gender + " does not exist in the dataset";
-//        }
-//        return "";
-//    }
 
 
     //edge cases
@@ -372,51 +359,19 @@ public class Information {
                 return "There is an error with the specified file(s)";
             }
 
-            List<String[]> recent_checked_list = getRowAtSpecifiedEqualityCheck(curr_arr, "just gender","F", "");
+            List<String[]> recent_checked_list = getRowAtSpecifiedEqualityCheck(curr_arr, "just gender", "F", "");
             if (recent_checked_list.size() > 0) {
                 check_if_females_exist = true;
-                for (String[] rows: recent_checked_list){
-                    String letter = rows[0].substring(0,1);
+                for (String[] rows : recent_checked_list) {
+                    String letter = rows[0].substring(0, 1);
                     letter_map.put(letter, letter_map.getOrDefault(letter, 0) + Integer.parseInt(rows[2]));
                 }
-            }
-            else{
+            } else {
                 return "There are no females in this dataset";
             }
-
-
-
-//            for (String[] rows : curr_arr) {
-//                if (checkGenderEquality(rows[1], "F")) {
-//                    check = true;
-//                    //just check if length of return is >0
-//                    String letter = rows[0].substring(0, 1);
-//                    letter_map.put(letter, letter_map.getOrDefault(letter, 0) + Integer.parseInt(rows[2]));
-//                } else {
-//                    return "There are no females in this dataset";
-//                }
-//            }
-
         }
 
-        //now that we have a map of all the letters, we want to go through that map, and find the highest value
-        // once we get that value, return all names associated with the value
-        // which means we once again need to loop through all of the years?
-        // seems innefficent - should we have stored the name somewhere?
-        //now, if we have ties -> thus will always give us alphabetically first because of the treeset
-
-
-//        //lambda
-//        String letter_max = "";
-//        int max = Collections.max(letter_map.values());
-//        for (String key : letter_map.keySet()) {
-//            if (letter_map.get(key) == max) {
-//                letter_max = key;
-//                break;
-//            }
-//        }
-
-        String letter_max = keysWithMaxValues(letter_map).get(0);
+        String letter_max = keysWithMaxValues("int", letter_map, null).get(0);
 
         //use get or lambda
         //see other methods that use this
@@ -430,12 +385,6 @@ public class Information {
                 }
 
             }
-
-//            for (String[] rows : curr_arr) {
-//                if ((checkGenderEquality(rows[1],"F") && checkFirstLetterEquality(rows[0],letter_max))) {
-//                    ret.add(rows[0]);
-//                }
-//            }
         }
 
         for (Map.Entry entry : letter_map.entrySet()) {
@@ -449,206 +398,194 @@ public class Information {
     }
 
     //EdgeCases - name & gender combo doesn't exist
-    public List<String> nameGenderRankingsInRange(String name, String gender, int start, int end) {
-        List rankings = new ArrayList();
-        for (int year = start; year <= end; year++) {
-            String[][] curr_arr = data.getArray(year);
-            if (!isFileValid(curr_arr)) {
-               rankings.add("There is an error with the specified file(s)");
-               return rankings;
-            }
-
-            List<String[]> recent_checked_list = getRowAtSpecifiedEqualityCheck(curr_arr, "name & gender", name, gender);
-            if (recent_checked_list.size() > 0) {
-                rankings.add(recent_checked_list.get(0)[3]);
-            }
-            else{
-                rankings.add("");
-            }
-//            for (String[] rows: curr_arr){
-//                if (rows[0].equals(name) && checkGenderEquality(rows[1],"F")){
-//                    rankings.add(rows[3]);
-//                }
-//            }
-        }
-
-        return rankings;
-
-//        return "From " + start + " to " + end + " the name " + name + " and gender " + gender + " had the following rankings, with 0 indicating the combination did" +
-//                " not exist for that year: " + rankings.toString();
-    }
-
-    public int rankingDifferenceFirstLast(int start, int end, String name, String gender) {
-        List<String> rankings = nameGenderRankingsInRange(name, gender, start, end);
-        if (rankings.get(0).equals("")){
-            return -1;
-        }
-        int first_year_index = 0 ;
-        int last_year_index = rankings.size() - 1;
-        int first_year_rank = Integer.parseInt(rankings.get(first_year_index));
-        int last_year_rank = Integer.parseInt(rankings.get(last_year_index));
-        return (first_year_rank - last_year_rank);
-
-//        //get the first year rank
-//        String[][] first_year_array = data.getArray(start);
-//        if (!isFileValid(first_year_array)) {
-//            return "There is an error with the specified file(s)";
-//        }
-//        String[][] last_year_array = data.getArray(end);
-//        if (!isFileValid(last_year_array)) {
-//            return "There is an error with the specified file(s)";
-//        }
-//        int first_year_rank = 0;
-//        boolean exists_in_first_year = false;
-//        List<String[]> first_checked_list = getRowAtSpecifiedEqualityCheck(first_year_array, "name & gender", name, gender);
-//        if (first_checked_list.size() > 0) {
-//            exists_in_first_year = true;
-//            first_year_rank = getRankFromCheckedList(first_checked_list);
-//            //first_year_rank = Integer.parseInt(first_checked_list.get(0)[3]);
-//        }
-//
-//        int last_year_rank = 0;
-//        boolean exists_in_second_year = false;
-//        List<String[]> second_checked_list = getRowAtSpecifiedEqualityCheck(last_year_array, "name & gender", name, gender);
-//        if (second_checked_list.size() > 0) {
-//            exists_in_second_year = true;
-//            last_year_rank = getRankFromCheckedList(second_checked_list);
-//            //last_year_rank = Integer.parseInt(second_checked_list.get(0)[3]);
-//        }
-//        if (exists_in_first_year && exists_in_second_year) {
-//            return "The difference in rankings for " + start + " and " + end + " for the name " + name + " and gender " + gender + " is " + (first_year_rank - last_year_rank);
-//        } else {
-//            return "The name " + name + " and gender " + gender + " combination does not exist for one or more of the specified years";
-//        }
-    }
-
-
-    //fix edge case of name in one but not other
-    public String rankingChangeFirstAndLast(int start, int end, String gender) {
-        List<String> rankings = nameGenderRankingsInRange(name, gender, start, end);
-        if (rankings.get(0).equals("")){
-            return -1;
-        }
-        int first_year_index = 0 ;
-        int last_year_index = rankings.size() - 1;
-        int first_year_rank = Integer.parseInt(rankings.get(first_year_index));
-        int last_year_rank = Integer.parseInt(rankings.get(last_year_index));
-
-//        String[][] first_year_array = data.getArray(start);
-//        if (!isFileValid(first_year_array)) {
-//            return "There is an error with the specified file(s)";
-//        }
-//        String[][] last_year_array = data.getArray(end);
-//        if (!isFileValid(last_year_array)) {
-//            return "There is an error with the specified file(s)";
-//        }
-//        Map<String, Integer> ranking_map = new HashMap<>();
-//        for (String[] rows_first : first_year_array) {
-//            //get the name -> go to the last year array and get the rank at that name
-//            //if the name second equals name first, get the ranking difference and put it to max
-//            for (String[] rows_last : last_year_array) {
-//                if (rows_first[0].equals(rows_last[0])) {
-//                    int difference = Math.abs(Integer.parseInt(rows_first[3]) - Integer.parseInt(rows_last[3]));
-//                    ranking_map.put(rows_first[0], difference);
-//                }
-//            }
-//        }
-//        int max_difference = Collections.max(ranking_map.values());
-//        List names_with_max_difference = new ArrayList();
-//        for (String names : ranking_map.keySet()) {
-//            if (ranking_map.get(names) == max_difference) {
-//                names_with_max_difference.add(names);
-//            }
-//        }
-//        return names_with_max_difference.toString();
-
-    }
-
-    public String averageOverYears(int start, int end, String name, String gender) {
+    public List<Integer> nameGenderRankingsInRange(String name, String gender, int start, int end) {
         List<Integer> rankings = new ArrayList();
         for (int year = start; year <= end; year++) {
             String[][] curr_arr = data.getArray(year);
             if (!isFileValid(curr_arr)) {
-                return "There is an error with the specified file(s)";
+                rankings.add(-2);
+                return rankings;
             }
             List<String[]> recent_checked_list = getRowAtSpecifiedEqualityCheck(curr_arr, "name & gender", name, gender);
             if (recent_checked_list.size() > 0) {
                 rankings.add(Integer.parseInt(recent_checked_list.get(0)[3]));
             }
         }
-
-        int sum = 0;
-        int count = 0;
-        for (int rank : rankings) {
-            sum += rank;
-            count++;
+        if (rankings.size() == 0) {
+            rankings.add(-1);
         }
-        return "Average: " + (double) sum / count;
+        return rankings;
+
+
+//        return "From " + start + " to " + end + " the name " + name + " and gender " + gender + " had the following rankings, with 0 indicating the combination did" +
+//                " not exist for that year: " + rankings.toString();
     }
 
-    public String highestAverageOverYears(int start, int end, String gender) {
-        Map<String, Double> rank_map = new HashMap<>();
-        for (int year = start; year <= end; year++) {
-            String[][] curr_arr = data.getArray(year);
-            if (!isFileValid(curr_arr)) {
-                return "There is an error with the specified file(s)";
-            }
-            //loop through array and add each name to a map
-            for (String[] rows : curr_arr) {
-                if ((rows[1]).equals(gender)) {
-                    rank_map.put(rows[0], (rank_map.getOrDefault(rows[0], 0.0) + (double) Integer.parseInt(rows[3])));
-                }
-            }
+    //difference in ranking between first and last
+    //all files in the range should exist
+    //name and gender should exist for first and last files
+    public void rankingDifferenceFirstLast(int start, int end, String name, String gender) {
+        List<Integer> rankings = nameGenderRankingsInRange(name, gender, start, end);
+
+        if (rankings.contains(-2)) {
+            System.out.println("There is an error with the specified file(s)");
+            return;
         }
-        List names_with_best_average = new ArrayList();
-        int years = end - start;
-        double best_average = Collections.min(rank_map.values()) / years;
-        for (String names : rank_map.keySet()) {
-            if (rank_map.get(names) == best_average) {
-                names_with_best_average.add(names);
-            }
+
+        int first_year_index = 0;
+        int last_year_index = rankings.size() - 1;
+
+        if (rankings.get(first_year_index).equals(-1) || rankings.get(last_year_index).equals(-1)) {
+            System.out.println("The name and gender combination could not be found");
+            return;
         }
-        return names_with_best_average.toString();
+
+        int first_year_rank = rankings.get(first_year_index);
+        int last_year_rank = rankings.get(last_year_index);
+        System.out.println(first_year_rank - last_year_rank);
     }
 
-    public List namesAtRankInRange(int start, int end, String gender, int rank) {
-        List<String> names_with_rank = new ArrayList();
-        for (int year = start; year <= end; year++) {
-            String[][] curr_arr = data.getArray(year);
-            if (!isFileValid(curr_arr)) {
-                names_with_rank.add("There is an error with the specified file(s)");
-                return names_with_rank;
-            }
-            List<String[]> recent_checked_list = getRowAtSpecifiedEqualityCheck(curr_arr, "rank & gender", Integer.toString(rank), gender);
-            for (String[] rows : recent_checked_list) {
-                names_with_rank.add(rows[0]);
+
+    //name is in one year but not the other -> -1 value could cause an issue
+    // all files in range should exist
+    //gender needs to exist in first and last file
+
+    public void rankingChangeFirstAndLast(int start, int end, String gender) {
+        Map<String, Integer> names_and_rankings = new HashMap<>();
+        Set<String> names_in_range = listToSet(getListOfNamesInRange(start, end, gender));
+
+        if (names_in_range.contains("-2")) {
+            System.out.println("There is an error with the specified file(s)");
+            return;
+        }
+        if (names_in_range.contains("-1")) {
+            System.out.println("The gender was not found for the given range of years in this dataset");
+            return;
+        }
+
+        for (String names : names_in_range) {
+            List<Integer> rankings = nameGenderRankingsInRange(names, gender, start, end);
+            int first_year_index = 0;
+            int last__year_index = rankings.size() - 1;
+            if (!(rankings.get(first_year_index) == -1 && rankings.get(last__year_index) == -1)) {
+                names_and_rankings.put(names, Math.abs(rankings.get(first_year_index) - rankings.get(last__year_index)));
             }
         }
-        return names_with_rank;
+
+        List<String> max_difference_names = keysWithMaxValues("int", names_and_rankings, null);
+        System.out.println(max_difference_names.toString());
     }
 
-    public String rankMostOften(int start, int end, String gender, int rank) {
+
+    //error with files
+    //don't throw an error message unless the combo isn't found for ALL years
+    public void averageOverYears(int start, int end, String name, String gender) {
+        List<Integer> rankings = nameGenderRankingsInRange(name, gender, start, end);
+        if (rankings.contains(-2)) {
+            System.out.println("There is an error with the specified file(s)");
+            return;
+        }
+
+        //FOR ALL YEARS
+        if (rankings.contains(-1)) {
+            System.out.println("The name and gender combination could not be found");
+            return;
+        }
+        System.out.println("Average: " + average(rankings));
+    }
+
+    //file error
+    //gender can't  be found for ALL years
+    public void highestAverageOverYears(int start, int end, String gender) {
+        Set<String> names_in_range = listToSet(getListOfNamesInRange(start, end, gender));
+
+        if (names_in_range.contains("-2")) {
+            System.out.println("There is an error with the specified file(s)");
+            return;
+        }
+        if (names_in_range.contains("-1")) {
+            System.out.println("The gender was not found for the given range of years for this dataset");
+            return;
+        }
+
+        Map<String, Double> names_and_averages = new HashMap<>();
+        for (String names : names_in_range) {
+            List<Integer> rankings = nameGenderRankingsInRange(names, gender, start, end);
+            double average = average(rankings);
+            names_and_averages.put(names, average);
+        }
+
+        List<String> max_difference_names = keysWithMaxValues("double", null, names_and_averages);
+        System.out.println(max_difference_names.toString());
+    }
+
+    //File error
+    //rank doesn't exist for a given year -> omit it from the set
+    //gender doesn't exist for a given year -> omit from the set
+    //rank doesn't exist for ALL years -> error
+    //gender doesn't exist for ALL years -> error
+
+    public List<String> namesAtRankInRange(int start, int end, String gender, int rank) {
+        List<String> names_in_range = getListOfNamesInRange(start, end, gender);
+
+
+//        if (names_in_range.contains("-2")){
+//            names_in_range.clear();
+//            names_in_range.add("There is an error with the specified file(s)");
+//            return names_in_range;
+//        }
+//
+//        if (names_in_range.contains("-1")){
+//            names_in_range.clear();
+//            names_in_range.add("The gender was not found for the given range of years for this dataset");
+//            return names_in_range;
+//        }
+
+        //Set<String> names_with_matching_rank = new HashSet<>();
+        List<String> names_with_matching_rank = new ArrayList<>();
+        for (String names : names_in_range) {
+            List<Integer> rankings = nameGenderRankingsInRange(names, gender, start, end);
+            if (rankings.contains(-1)) {
+                names_with_matching_rank.add("The rank was not found for the given range of years for this dataset");
+                return names_with_matching_rank;
+            }
+            if (rankings.contains(rank)) {
+                names_with_matching_rank.add(names);
+            }
+        }
+        if (names_with_matching_rank.size() == 0) {
+            names_with_matching_rank.add("The rank was not found for the given range of years for this dataset");
+        }
+        return names_with_matching_rank;
+    }
+
+    //file error
+    //gender doesn't exist for ALL years
+    //rank doesn't exist for ALL years
+    public List<String> rankMostOften(int start, int end, String gender, int rank) {
         List<String> names_with_rank = namesAtRankInRange(start, end, gender, rank);
         Map<String, Integer> names_with_count = new HashMap();
         for (String names : names_with_rank) {
             names_with_count.put(names, names_with_count.getOrDefault(names, 0) + 1);
         }
-        int names_max = Collections.max(names_with_count.values());
-        Set highest_rank_most_often = new HashSet();
-        for (String names : names_with_count.keySet()) {
-            if (names_with_count.get(names) == names_max) {
-                highest_rank_most_often.add(names);
-            }
+        List<String> most_popular_names = keysWithMaxValues("int", names_with_count, null);
+
+
+//        int names_max = Collections.max(names_with_count.values());
+//        Set highest_rank_most_often = new HashSet();
+//        for (String names : names_with_count.keySet()) {
+//            if (names_with_count.get(names) == names_max) {
+//                highest_rank_most_often.add(names);
+//            }
+//        }
+
+        List<String> ret  = new ArrayList<>();
+        for (String names : most_popular_names) {
+            ret.add(names + " " + names_with_count.get(names));
         }
-        return highest_rank_most_often.toString();
+        return ret;
     }
 }
 
-//check name and gender equality
-//check gender equality and first letter
-//check gender eqaulity
-//check rank and gender equality
-
-//helper method could do the loop and retunr the
 
 
