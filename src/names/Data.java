@@ -12,6 +12,7 @@ public class Data {
         //get the 2d array for a given year
     // Was originally going to make this a void method, but when working with multiple years at once, need this to return a different array each time so changed to String[][]
     public String[][] getArray(int year) {
+
         List<String> names = new ArrayList<>();
         int lines = 0;
         String[][] ret;

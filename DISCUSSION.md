@@ -14,7 +14,7 @@ Method names like getArray() and topRankedName() are clear and helpful, but othe
 Need methods that combine the repeated for loop that goes through the 2D array. 
 
  * What assumptions does this code have?
-This code assumes the file name will be in the form "yob____.txt", and females will come first and then males. 
+This code assumes the file name will be in the form "yob____.txt", and females will come first and then males. No duplicate names as well. s
 
  * What comments might be helpful within the code?
  I need javadoc comments that explain high level what the methods do rather than the inline comments I have. 
