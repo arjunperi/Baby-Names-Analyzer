@@ -1,0 +1,14 @@
+Emily,F,25953
+Hannah,F,23080
+Madison,F,19967
+Ashley,F,17997
+Sarah,F,17697
+Alexis,F,17629
+Samantha,F,17266
+Jessica,F,15709
+Elizabeth,F,15094
+Taylor,F,15078
+Jacob,M,34471
+Michael,M,32035
+Matthew,M,28572
+Joshua,M,27538

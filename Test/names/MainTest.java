@@ -4,8 +4,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.FileNotFoundException;
-import java.util.Set;
-import java.util.TreeSet;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -17,19 +15,9 @@ class MainTest {
         info = new Information();
     }
 
-//    @Test
-//    void femaleTopRanked() throws FileNotFoundException {
-//        assertEquals("There are no females in this dataset", info.femaleTopRanked(19001));
-//        assertEquals("The top ranked female name is: Mary", info.femaleTopRanked(1900));
-//        assertEquals("The top ranked female name is: Emily", info.femaleTopRanked(2000));
-//    }
-//
-//    @Test
-//    void maleTopRanked() throws FileNotFoundException {
-//        assertEquals("There are no males in this dataset", info.maleTopRanked(19002));
-//        assertEquals("The top ranked male name is: John", info.maleTopRanked(1900));
-//        assertEquals("The top ranked male name is: Jacob", info.maleTopRanked(2000));
-//    }
+
+
+
 //
 //    @Test
 //    void letter() throws FileNotFoundException {
@@ -41,8 +29,8 @@ class MainTest {
 
     @Test
     void nameGenderRank() throws FileNotFoundException {
-        assertEquals("The rankings for the name Emily and gender F are: [0, 0, 0, 0, 0, 0, 1, 1, 6], with rank 0 indicating the name/gender combination does not exist for a year.", info.nameGenderRank("Emily","F"));
-        assertEquals("The rankings for the name xyz and gender F are: [0, 0, 0, 0, 0, 0, 0, 0, 0], with rank 0 indicating the name/gender combination does not exist for a year.", info.nameGenderRank("xyz", "F"));
+        assertEquals("The rankings for the name Emily and gender F are: [0, 0, 0, 0, 0, 0, 1, 1, 6], with rank 0 indicating the name/gender combination does not exist for a year.", info.getRankFromNameAndGender("Emily","F"));
+        assertEquals("The rankings for the name xyz and gender F are: [0, 0, 0, 0, 0, 0, 0, 0, 0], with rank 0 indicating the name/gender combination does not exist for a year.", info.getRankFromNameAndGender("xyz", "F"));
         //assertEquals("");
      }
 
@@ -72,8 +60,8 @@ class MainTest {
     //test tie
     @Test
     void popularGirls() throws FileNotFoundException {
-        assertEquals("From 1900 to 1901, the most popular letter that girls' names started with was M, and the female names in the dataset starting with M are: [Margaret, Marie, Mary]" , info.popularGirls(1900,1901));
-        assertEquals("There are no females in this dataset", info.popularGirls(19001,19001));
-        assertEquals("From 19003 to 19004, the most popular letter that girls' names started with was E, and the female names in the dataset starting with E are: [Elizabeth, Ethel]", info.popularGirls(19003,19004));
+        assertEquals("From 1900 to 1901, the most popular letter that girls' names started with was M, and the female names in the dataset starting with M are: [Margaret, Marie, Mary]" , info.mostPopularGirlsStartingLetter(1900,1901));
+        assertEquals("There are no females in this dataset", info.mostPopularGirlsStartingLetter(19001,19001));
+        assertEquals("From 19003 to 19004, the most popular letter that girls' names started with was E, and the female names in the dataset starting with E are: [Elizabeth, Ethel]", info.mostPopularGirlsStartingLetter(19003,19004));
     }
 }

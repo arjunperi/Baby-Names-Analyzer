@@ -6,10 +6,10 @@ Ruth,F,4518
 Elizabeth,F,3723
 Marie,F,3469
 Florence,F,3468
-Ethel,F,3257
+Ethel,F,325700
 Mildred,F,3088
 John,M,7608
-William,M,6311
+William,L,6311
 James,M,5480
 George,M,3961
 Charles,M,3213
