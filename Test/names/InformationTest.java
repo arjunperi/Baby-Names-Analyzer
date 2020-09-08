@@ -123,19 +123,28 @@ class InformationTest {
 
 
     @Test
-    void nameGenderRankingsInRange() {
+    void rankingsOfSpecifiedNameAndGenderInRangeMale() {
+        List<Integer> correct_list = new ArrayList<>();
+        correct_list.add(3);
+        correct_list.add(3);
+        correct_list.add(3);
+        correct_list.add(3);
+        assertEquals(correct_list,info.rankingsOfSpecifiedNameAndGenderInRange("James","M",1900,1903));
     }
 
     @Test
-    void rankingDifferenceFirstLast() {
+    void rankingDifferenceFirstAndLastYears() {
+        assertEquals("2",info.rankingDifferenceFirstAndLastYears(1900,1901,"Marie", "F"));
     }
 
     @Test
-    void rankingChangeFirstAndLast() {
+    void largestRankingChangeFirstAndLastYears() {
+        assertEquals("[Marie]",info.largestRankingChangeFirstAndLastYears(1900,1901,"F"));
     }
 
     @Test
-    void averageOverYears() {
+    void averageRankOverYears_Half() {
+        assertEquals("Average: 7.5", info.averageRankOverYears(1900,1901,"Florence","F"));
     }
 
     @Test
@@ -143,10 +152,19 @@ class InformationTest {
     }
 
     @Test
-    void namesAtRankInRange() {
+    void namesAtSpecifiedRankInRange() {
+        List<String> correct_list = new ArrayList<>();
+        correct_list.add("John");
+        correct_list.add("John");
+        correct_list.add("John");
+        correct_list.add("John");
+        assertEquals(correct_list,info.namesAtSpecifiedRankInRange(1900,1903,"M",1));
     }
 
     @Test
     void rankMostOften() {
+        List<String> correct_list = new ArrayList<>();
+        correct_list.add("John 4");
+        assertEquals(correct_list, info.namesWithSpecifiedRankMostOften(1900,1903,"M",1));
     }
 }

@@ -2,6 +2,7 @@ package names;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.net.URL;
 import java.util.*;
 
 public class Data {
@@ -14,6 +15,8 @@ public class Data {
         String[][] null_array = new String[0][0];
 
         try {
+//            URL url = new URL("https://www2.cs.duke.edu/courses/fall20/compsci307d/assign/01_data/data/ssa_complete/yob1880.txt");
+//            File f = new File(url.getFile());
             File myObj = new File("data/TestSets/yob" + year + "split.txt");
             Scanner myReader = new Scanner(myObj);
 

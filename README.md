@@ -98,5 +98,7 @@ names, genders, or ranks not existing,etc.
 
 
 ### Impressions
-I didn't think the algorithms themselves were hard to code, the difficult part was understanding the scope of the 
+- I didn't think the algorithms themselves were hard to code, the difficult part was understanding the scope of the 
 project specifications and connecting all the methods together. 
+
+- I wish I gave myself a few more hours so that I could tackle the optional questions. 
