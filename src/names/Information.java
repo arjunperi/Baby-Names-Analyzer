@@ -14,7 +14,6 @@ public class Information {
     }
 
 
-
     public List<Integer> numberOfBabiesAndNamesWithStartingLetter(int year, String gender, String letter) {
         String[][] name_arr = data.getArray(year);
         List<Integer> num_babies_and_total_count = new ArrayList<>();
@@ -65,14 +64,9 @@ public class Information {
         if (specified_year_rankings.contains(-1)){
             return "The gender/rank was not found for the given range of years for this dataset";
         }
-        File[] array_of_files = getArrayOfFiles();
-        List<Integer> years = new ArrayList<>();
-        int most_recent_year;
-        for (File current_file : array_of_files) {
-            years.add(getYearFromFileName(current_file));
-        }
-        most_recent_year = Collections.max(years);
-        //make this a helper
+
+        int most_recent_year = getMostRecentYear();
+
         List<List<String>> recent_name = new ArrayList<>();
         for (int rank : specified_year_rankings) {
             recent_name.add(namesAtSpecifiedRankInRange(most_recent_year, most_recent_year, gender, rank));
@@ -82,8 +76,6 @@ public class Information {
     }
 
 
-    //year not in dataset - resolved
-    //gender not in dataset - resolved
     public String mostPopularNameInRange(int start, int end, String gender) {
         if (namesWithSpecifiedRankMostOften(start,end,gender,1).toString().contains("There is an error with the specified file(s)")){
             return "There is an error with the specified file(s)";
@@ -170,9 +162,6 @@ public class Information {
     }
 
 
-    //name is in one year but not the other -> -1 value could cause an issue
-    // all files in range should exist
-    //gender needs to exist in first and last file
     public String largestRankingChangeFirstAndLastYears(int start, int end, String gender) {
         Map<String, Integer> names_and_rankings = new HashMap<>();
         Set<String> names_in_range = listToSet(getListOfNamesInRange(start, end, gender));
@@ -200,8 +189,6 @@ public class Information {
     }
 
 
-    //error with files
-    //don't throw an error message unless the combo isn't found for ALL years
     public String averageRankOverYears(int start, int end, String name, String gender) {
         List<Integer> rankings = rankingsOfSpecifiedNameAndGenderInRange(name, gender, start, end);
         if (rankings.contains(-2)) {
@@ -209,7 +196,6 @@ public class Information {
 
         }
 
-        //FOR ALL YEARS
         if (rankings.contains(-3)) {
             return "The name and gender combination could not be found";
 
@@ -217,8 +203,7 @@ public class Information {
         return ("Average: " + average(rankings));
     }
 
-    //file error
-    //gender can't  be found for ALL years
+
     public String highestAverageRankOverYears(int start, int end, String gender) {
         Set<String> names_in_range = listToSet(getListOfNamesInRange(start, end, gender));
 
@@ -241,11 +226,12 @@ public class Information {
         return (max_difference_names.toString());
     }
 
-    //File error
-    //rank doesn't exist for a given year -> omit it from the set
-    //gender doesn't exist for a given year -> omit from the set
-    //rank doesn't exist for ALL years -> error
-    //gender doesn't exist for ALL years -> error
+    public String averageRankMostRecentYears(String name, String gender, int number_of_years){
+        int most_recent_year = getMostRecentYear();
+        int start_year = most_recent_year - number_of_years + 1;
+        return averageRankOverYears(start_year,most_recent_year,name,gender);
+    }
+
 
     public List<String> namesAtSpecifiedRankInRange(int start, int end, String gender, int rank) {
         List<String> names_in_range = getListOfNamesInRange(start, end, gender);
@@ -272,9 +258,7 @@ public class Information {
         return names_with_matching_rank;
     }
 
-    //file error
-    //gender doesn't exist for ALL years
-    //rank doesn't exist for ALL years
+
     public List<String> namesWithSpecifiedRankMostOften(int start, int end, String gender, int rank) {
         List<String> names_with_rank = namesAtSpecifiedRankInRange(start, end, gender, rank);
         Map<String, Integer> names_with_count = new HashMap<>();
@@ -330,7 +314,6 @@ public class Information {
                 //need the total instances, but also need all the names
                 if (type.equals("instances")) {
                     checked_rows.add(rows[2]);
-                    //checked_row=rows
                 } else {
                     checked_rows.add(rows[0]);
                 }
@@ -378,7 +361,7 @@ public class Information {
             return keys_with_max_difference;
 
         } else {
-            double max_value = Collections.max(map_unknown_max_double.values());
+            double max_value = Collections.min(map_unknown_max_double.values());
             List<String> keys_with_max_difference = new ArrayList<>();
             for (String keys : map_unknown_max_double.keySet()) {
                 if (map_unknown_max_double.get(keys) == max_value) {
@@ -403,12 +386,12 @@ public class Information {
     private List<String> getListOfNamesInRange(int start, int end, String gender) {
         List<String> names_in_range = new ArrayList<>();
         for (int year = start; year <= end; year++) {
-            String[][] curr_arr = data.getArray(year);
-            if (!isFileValid(curr_arr)) {
+            String[][] current_arrray = data.getArray(year);
+            if (!isFileValid(current_arrray)) {
                 names_in_range.add("-2");
                 return names_in_range;
             }
-            List<String[]> recent_checked_list = checkSpecifiedEqualitiesInArray(curr_arr, "just gender", gender, null);
+            List<String[]> recent_checked_list = checkSpecifiedEqualitiesInArray(current_arrray, "just gender", gender, null);
             if (recent_checked_list.size() > 0) {
                 for (String[] rows : recent_checked_list) {
                     String name = rows[0];
@@ -435,5 +418,16 @@ public class Information {
         }
         return (double) sum / count;
     }
+
+    private int getMostRecentYear(){
+        File[] array_of_files = getArrayOfFiles();
+        List<Integer> years = new ArrayList<>();
+        int most_recent_year;
+        for (File current_file : array_of_files) {
+            years.add(getYearFromFileName(current_file));
+        }
+        return Collections.max(years);
+    }
+
 }
 

@@ -32,6 +32,7 @@ class InformationTest {
     }
 
 
+
     @Test
     void numberOfBabiesAndNamesWithStartingLetterFemale() {
         List<Integer> correct_list = new ArrayList<>();
@@ -59,19 +60,19 @@ class InformationTest {
     @Test
     void getRankFromNameAndGenderFemale() {
         assertEquals("The rankings for the name Emily and " +
-                "gender F are: [-1, -1, -1, -1, -1, -1, -1, -1, 1, 1, 1, 6], with rank -1 indicating " +
+                "gender F are: [-1, -1, -1, -1, -1, -1, -1, -1, 1, 1, 1, 3, 6], with rank -1 indicating " +
                 "the name/gender combination does not exist for a year.",info.getRankFromNameAndGender("Emily","F"));
     }
 
     @Test
     void getRankFromNameAndGenderMale() {
-        assertEquals("The rankings for the name Henry and gender M are: [10, 10, 10, 10, 10, 10, 10, -1, -1, -1, -1, -1], " +
+        assertEquals("The rankings for the name Henry and gender M are: [10, 10, 10, 10, 10, 10, 10, -1, -1, -1, -1, -1, -1], " +
                 "with rank -1 indicating the name/gender combination does not exist for a year.",info.getRankFromNameAndGender("Henry","M"));
     }
 
     @Test
     void getRankFromNameAndGender_InvalidCombo() {
-        assertEquals("The rankings for the name Henry and gender F are: [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], " +
+        assertEquals("The rankings for the name Henry and gender F are: [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1], " +
                 "with rank -1 indicating the name/gender combination does not exist for a year.",info.getRankFromNameAndGender("Henry","F"));
     }
 
@@ -149,6 +150,12 @@ class InformationTest {
 
     @Test
     void highestAverageOverYears() {
+        assertEquals("[John]",info.highestAverageRankOverYears(1900,1901,"M"));
+    }
+
+    @Test
+    void averageRankMostRecentYears() {
+        assertEquals("Average: 1.5",info.averageRankMostRecentYears("Isabella","F",2));
     }
 
     @Test

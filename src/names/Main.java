@@ -1,14 +1,11 @@
 package names;
-import java.io.FileNotFoundException;  // Import this class to handle errors
+import java.io.FileNotFoundException;
 
 
-//toUppercase???
-//file stuff - getting it from different directories
 public class Main {
 
     public static void main(String[] args) throws FileNotFoundException {
         Information info = new Information();
-
         //System.out.println(info.topRankedName(1900,"L"));
         //System.out.println(info.numberOfBabiesAndNamesWithStartingLetter(1901,"F","x"));
         //System.out.println(info.printNumberOfBabiesAndNamesWithStartingLetter(1901,"F","M"));
@@ -22,8 +19,9 @@ public class Main {
         //System.out.println(info.largestRankingChangeFirstAndLastYears(1900,1901,"F"));
         //System.out.println(info.averageRankOverYears(1900,1901,"Florence","F"));
         //System.out.println(info.highestAverageRankOverYears(1900,1901,"M"));
+        //System.out.println(info.averageRankMostRecentYears("Isabella","F",2));
         //System.out.println(info.namesAtSpecifiedRankInRange(1900,1903,"M",1));
-        System.out.println(info.namesWithSpecifiedRankMostOften(1900,1903,"M",1));
+        //System.out.println(info.namesWithSpecifiedRankMostOften(1900,1903,"M",1));
     }
 }
 
