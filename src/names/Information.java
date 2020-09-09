@@ -7,13 +7,24 @@ public class Information {
 
     Data data = new Data();
 
-
+    /**
+     * Calls later method and uses the same year for both inputs of the range and rank 1 to specify one year and top rank
+     * @param year year where top rank is being looked for
+     * @param gender gender of name at top rank that is being looked for
+     * @return the top ranked name at a given year and gender
+     */
     public String topRankedName(int year, String gender) {
         List<String> top_ranked_name = namesAtSpecifiedRankInRange(year, year, gender, 1);
         return top_ranked_name.toString();
     }
 
-
+    /**
+     * Goes through
+     * @param year
+     * @param gender
+     * @param letter
+     * @return
+     */
     public List<Integer> numberOfBabiesAndNamesWithStartingLetter(int year, String gender, String letter) {
         String[][] name_arr = data.getArray(year);
         List<Integer> num_babies_and_total_count = new ArrayList<>();
