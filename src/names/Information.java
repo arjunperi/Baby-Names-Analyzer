@@ -19,11 +19,12 @@ public class Information {
     }
 
     /**
-     * Goes through
-     * @param year
-     * @param gender
-     * @param letter
-     * @return
+     * Calls a helper method that loops through the year array and adds all the count fields of names that have the starting letter and gender to a list,
+     * then loops through that list and gets the total as well as the number of different names
+     * @param year the year we are looking through
+     * @param gender the gender we are looking for
+     * @param letter the starting letter we are looking for
+     * @return the number of different names and total babies with the starting letter
      */
     public List<Integer> numberOfBabiesAndNamesWithStartingLetter(int year, String gender, String letter) {
         String[][] name_arr = data.getArray(year);
@@ -48,6 +49,13 @@ public class Information {
         return num_babies_and_total_count;
     }
 
+    /**
+     * Prints helper method that formats the printing of the above method
+     * @param year the year we're looking through
+     * @param gender the gender we're looking for
+     * @param letter the starting letter we're looking for
+     * @return a formatted print string
+     */
     public String printNumberOfBabiesAndNamesWithStartingLetter(int year, String gender, String letter){
         List<Integer> methodResult = numberOfBabiesAndNamesWithStartingLetter(year, gender, letter);
         if (methodResult.contains(-1)){
@@ -56,7 +64,12 @@ public class Information {
         return "For gender " + gender + " and starting letter " + letter + ", there are " + methodResult.get(1) + " different names and " + methodResult.get(0) + " total instances";
     }
 
-
+    /**
+     * Goes through the files in the dataset and calls the rankings method for each year, inputting the same year as start and end in the range
+     * @param name the name of the rank we're looking for
+     * @param gender the gender of the rank we're looking for
+     * @return the rankings throughout the years
+     */
     //To input decade, update getArrayOfFiles()
     public String getRankFromNameAndGender(String name, String gender) {
         List<Integer> rankings = new ArrayList<>();
@@ -70,6 +83,13 @@ public class Information {
     }
 
 
+    /**
+     * Gets the rank of the specified year, gets the most recent year in the dataset, then finds the rank at the most recent year that matches
+     * @param year the year of the rank we're looking at
+     * @param name the name of the rank we're looking at
+     * @param gender the gender of the rank we're looking at
+     * @return the name in the most recent year with rank and gender equal to that of specified year
+     */
     public String correspondingNameMostRecentYear(int year, String name, String gender) {
         List<Integer> specified_year_rankings = rankingsOfSpecifiedNameAndGenderInRange(name, gender, year, year);
         if (specified_year_rankings.contains(-1)){
@@ -87,6 +107,13 @@ public class Information {
     }
 
 
+    /**
+     * calls a method that gives the names that have a certain rank the most often throughout a range with rank input 1
+     * @param start first year in range
+     * @param end last year in range
+     * @param gender gender of name we're looking for
+     * @return the most popular name (rank 1) over the range
+     */
     public String mostPopularNameInRange(int start, int end, String gender) {
         if (namesWithSpecifiedRankMostOften(start,end,gender,1).toString().contains("There is an error with the specified file(s)")){
             return "There is an error with the specified file(s)";
@@ -95,7 +122,13 @@ public class Information {
     }
 
 
-
+    /**
+     * Loops through the years in range, for each year, loops through the alphabet and puts the letter and the number of babies with that letter in a mop, gets the most popular letter
+     * then gets all the names associated with the letter
+     * @param start first year in range
+     * @param end last year in range
+     * @return the top names corresponding to the top letter and the top letter
+     */
     public String mostPopularGirlsStartingLetter(int start, int end) {
         Map<String, Integer> letter_map = new TreeMap<>();
         for (int year = start; year <= end; year++) {
@@ -127,7 +160,14 @@ public class Information {
     }
 
 
-
+    /**
+     * Goes through the years in range and calls a helper method that checks for the name and gender and gets the rankings
+     * @param name the name whose ranks we're looking for
+     * @param gender the gender whose ranks were looking for
+     * @param start first year in range
+     * @param end last year in range
+     * @return the rankings of the name and gender over the range
+     */
     public List<Integer> rankingsOfSpecifiedNameAndGenderInRange(String name, String gender, int start, int end) {
         List<Integer> rankings = new ArrayList<>();
         for (int year = start; year <= end; year++) {
@@ -152,7 +192,15 @@ public class Information {
     }
 
 
-    public String  rankingDifferenceFirstAndLastYears(int start, int end, String name, String gender) {
+    /**
+     * Calls a helper method that gets all the rankings for the name and gender over the range, gets the first rank and last rank of the returned list and takes difference
+     * @param start first year in range
+     * @param end last year in range
+     * @param name name whose rank we're looking for
+     * @param gender gender whose rank we're looking for
+     * @return the difference between first and last year rankings
+     */
+    public String rankingDifferenceFirstAndLastYears(int start, int end, String name, String gender) {
         List<Integer> rankings = rankingsOfSpecifiedNameAndGenderInRange(name, gender, start, end);
 
         if (rankings.contains(-2)) {
@@ -173,6 +221,14 @@ public class Information {
     }
 
 
+    /**
+     * Gets a set of all the names in the given range for the gender, loops through the set and gets the rankings of each over the range, gets the difference from first and last for each
+     * and puts in map, gets the key with max differnece from the map
+     * @param start first year in range
+     * @param end last year in range
+     * @param gender gender whose ranking change we're looking for
+     * @return the name with largest rank change of first and last years
+     */
     public String largestRankingChangeFirstAndLastYears(int start, int end, String gender) {
         Map<String, Integer> names_and_rankings = new HashMap<>();
         Set<String> names_in_range = listToSet(getListOfNamesInRange(start, end, gender));
@@ -200,6 +256,14 @@ public class Information {
     }
 
 
+    /**
+     * Gets the rankings over the range, calls average helper method on that range
+     * @param start first year in range
+     * @param end last year in range
+     * @param name name whose rankings were looking at
+     * @param gender gender whose rankings were looking
+     * @return the average ranking over the range
+     */
     public String averageRankOverYears(int start, int end, String name, String gender) {
         List<Integer> rankings = rankingsOfSpecifiedNameAndGenderInRange(name, gender, start, end);
         if (rankings.contains(-2)) {
@@ -215,6 +279,13 @@ public class Information {
     }
 
 
+    /**
+     * Gets a set of all names in the range, for each name in set, gets the rankings over the range, puts the name and its average over the range
+     * @param start first year in range
+     * @param end last year in range
+     * @param gender gender whose rankings we're looking for
+     * @return the name with highest average rank over range
+     */
     public String highestAverageRankOverYears(int start, int end, String gender) {
         Set<String> names_in_range = listToSet(getListOfNamesInRange(start, end, gender));
 
@@ -237,6 +308,13 @@ public class Information {
         return (max_difference_names.toString());
     }
 
+    /**
+     * Gets the most recent year in dataset, gets the first year in dataset, gets the average rank over the range
+     * @param name name whose rankings we're looking for
+     * @param gender gender whose rankings we're looking for
+     * @param number_of_years the most recent number of years we're looking at
+     * @return the average rank over the specified recent years
+     */
     public String averageRankMostRecentYears(String name, String gender, int number_of_years){
         int most_recent_year = getMostRecentYear();
         int start_year = most_recent_year - number_of_years + 1;
@@ -244,6 +322,15 @@ public class Information {
     }
 
 
+    /**
+     * gets a list of all the names in the range, for each name, get the rankings over the range, if there is a rank in that list of rankings equal to the specified rank,
+     * add the name to a list
+     * @param start first year in range
+     * @param end last year in range
+     * @param gender gender whose names we get
+     * @param rank the rank we're trying to match
+     * @return
+     */
     public List<String> namesAtSpecifiedRankInRange(int start, int end, String gender, int rank) {
         List<String> names_in_range = getListOfNamesInRange(start, end, gender);
 
@@ -270,6 +357,15 @@ public class Information {
     }
 
 
+    /**
+     * gets all the names with the specified rank over the range, for each name, add it to the map with the amount of that rank occuring over the range for the name as the value,
+     * get the names in the map with the max values
+     * @param start first year in range
+     * @param end last year in range
+     * @param gender gender whose name/rankings we're looking at
+     * @param rank specified rank we're looking to match
+     * @return the names that hold the rank the most often
+     */
     public List<String> namesWithSpecifiedRankMostOften(int start, int end, String gender, int rank) {
         List<String> names_with_rank = namesAtSpecifiedRankInRange(start, end, gender, rank);
         Map<String, Integer> names_with_count = new HashMap<>();
