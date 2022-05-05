@@ -1,7 +1,7 @@
-data
+Baby Names Analyzer
 ====
 
-This project uses data about [baby names from the US Social Security Administration](https://www.ssa.gov/oact/babynames/limits.html) to answer specific questions. 
+This project uses data about [baby names from the US Social Security Administration](https://www.ssa.gov/oact/babynames/limits.html) to answer specific questions such as the post popular baby names for each starting letter, by year, by gender, etc. 
 
 
 Name: 
@@ -18,8 +18,6 @@ Finish Date:
 Hours Spent:
 ~40Hrs
 
-### Resources Used
-Piazza, Course Webpage, Readings, Google (Stack Overflow etc.)
 
 ### Running the Program
 
@@ -30,16 +28,6 @@ Data files needed:
 Everything in my folder called TestSets is what is needed for the tests I have created. I mainly
 use yob1900split.txt - yob1903split.txt to run tests, which are files with 10 girls and 10 boys so 
 it is easy to manually check things. The other files in the folder were used to test certain edge cases. 
-
-Key/Mouse inputs:
-?
-
-Cheat keys:
-?
-
-Known Bugs:
-
-Extra credit:
 
 
 ### Notes/Assumptions
@@ -95,10 +83,3 @@ names, genders, or ranks not existing,etc.
     - These errors are handled in different ways throughout the code depending on which methods call
     which methods, for example there are certain return values from helper methods that trigger a certain
     print statement or response. The code shouldn't crash as long as all the assumptions hold. 
-
-
-### Impressions
-- I didn't think the algorithms themselves were hard to code, the difficult part was understanding the scope of the 
-project specifications and connecting all the methods together. 
-
-- I wish I gave myself a few more hours so that I could tackle the optional questions. 
