@@ -1,7 +1,7 @@
 Baby Names Analyzer
 ====
 
-This project uses data about [baby names from the US Social Security Administration](https://www.ssa.gov/oact/babynames/limits.html) to answer specific questions such as the post popular baby names for each starting letter, by year, by gender, etc. 
+This project uses data about [baby names from the US Social Security Administration](https://www.ssa.gov/oact/babynames/limits.html) to answer specific questions such as the most popular baby names for each starting letter, by year, by gender, etc. 
 
 
 Name: 
